@@ -42,14 +42,23 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<Response>
   return json<LoaderData>({ sessions: sessionsWithCommands });
 }
 
+interface LoaderData {
+  sessions: TerminalSessionWithCommands[];
+}
+
 export default function AITerminal() {
-  const { sessions } = useLoaderData<typeof loader>();
+  const { sessions } = useLoaderData<LoaderData>();
   const fetcher = useFetcher<{ success: boolean; session?: TerminalSession }>();
   const [activeSession, setActiveSession] = useState<TerminalSessionWithCommands | null>(null);
   const [isCreatingSession, setIsCreatingSession] = useState(false);
   const [newSessionName, setNewSessionName] = useState('');
   const [newSessionEnv, setNewSessionEnv] = useState('development');
+  const [currentCommand, setCurrentCommand] = useState('');
+  const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const terminalRef = useRef<HTMLDivElement>(null);
+  
+  // Find the current session based on activeSessionId
+  const currentSession = activeSession || sessions[0];
 
   // Set first session as active by default
   useEffect(() => {
@@ -85,155 +94,36 @@ export default function AITerminal() {
   };
 
   const formatLastActivity = (dateString: string): string => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    
-    if (diffInSeconds < 60) return 'Just now';
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-    return `${Math.floor(diffInSeconds / 86400)}d ago`;
-  };
-
-  const handleSessionClick = (session: TerminalSessionWithCommands) => {
-    setActiveSession(session);
-  const { terminalSessions } = useLoaderData<typeof loader>();
-  const [activeSession, setActiveSession] = useState(terminalSessions[0]?.id || null);
-  const [currentCommand, setCurrentCommand] = useState('');
-  const [commandHistory, setCommandHistory] = useState<string[]>([]);
-  const [historyIndex, setHistoryIndex] = useState(-1);
-  const [isConnected, setIsConnected] = useState(true);
-  const terminalRef = useRef<HTMLDivElement>(null);
-
-  const currentSession = terminalSessions.find(s => s.id === activeSession);
-
-  const executeCommand = async (command: string) => {
-    if (!command.trim()) return;
-
-    setCommandHistory(prev => [...prev, command]);
-    setHistoryIndex(-1);
-    setCurrentCommand('');
-
-    // Add command to session
-    if (currentSession) {
-      currentSession.commands.push({
-        command,
-        output: 'Executing...',
-        status: 'running',
-      });
-    }
-
-    // Simulate command execution - in real app, send to backend
-    setTimeout(() => {
-      if (currentSession && currentSession.commands.length > 0) {
-        const lastCommand = currentSession.commands[currentSession.commands.length - 1];
-        if (lastCommand.command === command) {
-          lastCommand.output = getMockOutput(command);
-          lastCommand.status = 'completed';
-        }
-      }
-    }, 1000);
-  };
-
-  const getMockOutput = (command: string): string => {
-    if (command.startsWith('npm')) {
-      return 'npm: command completed successfully';
-    } else if (command.startsWith('git')) {
-      return 'Git command executed';
-    } else if (command.startsWith('ls')) {
-      return 'file1.txt  file2.js  src/  package.json  README.md';
-    } else if (command.startsWith('cd')) {
-      return 'Directory changed';
-    } else {
-      return `Command "${command}" executed successfully`;
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Unknown';
+      
+      const now = new Date();
+      const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+      
+      if (diffInSeconds < 60) return 'Just now';
+      if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+      if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+      return `${Math.floor(diffInSeconds / 86400)}d ago`;
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Unknown';
     }
   };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      executeCommand(currentCommand);
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      if (commandHistory.length > 0) {
-        const newIndex = historyIndex === -1 ? commandHistory.length - 1 : Math.max(0, historyIndex - 1);
-        setHistoryIndex(newIndex);
-        setCurrentCommand(commandHistory[newIndex]);
-      }
-    } else if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      if (historyIndex >= 0) {
-        const newIndex = historyIndex + 1;
-        if (newIndex < commandHistory.length) {
-          setHistoryIndex(newIndex);
-          setCurrentCommand(commandHistory[newIndex]);
-        } else {
-          setHistoryIndex(-1);
-          setCurrentCommand('');
-        }
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (terminalRef.current) {
-      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-    }
-  }, [currentSession?.commands]);
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">AI Terminal</h2>
-          <p className="text-gray-600 dark:text-gray-400">Integrated terminal with AI assistance</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className={`w-3 h-3 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></span>
-          <span className="text-sm text-gray-600 dark:text-gray-400">
-            {isConnected ? 'Connected' : 'Disconnected'}
-          </span>
-        </div>
-      </div>
-
-      {/* Session Tabs */}
-      <div className="flex gap-2 border-b border-gray-200 dark:border-gray-700">
-        {terminalSessions.map((session) => (
+    <div className="flex h-screen bg-gray-900 text-white">
+      {/* Sidebar */}
+      <div className="w-64 bg-gray-800 p-4 flex flex-col">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold">Terminal Sessions</h2>
           <button
-            key={session.id}
-            onClick={() => setActiveSession(session.id)}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-              activeSession === session.id
-                ? 'border-accent-500 text-accent-600 dark:text-accent-400'
-                : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
-            }`}
+            onClick={() => setIsCreatingSession(true)}
+            className="p-2 bg-red-600 rounded hover:bg-red-700"
+            title="New Session"
           >
-            {session.name}
+            +
           </button>
-        ))}
-      </div>
-
-      {/* Terminal Interface */}
-      <div className="bg-gray-900 rounded-lg border border-gray-700 overflow-hidden">
-        {/* Terminal Header */}
-        <div className="bg-gray-800 px-4 py-2 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex gap-1">
-              <div className="w-3 h-3 rounded-full bg-red-500"></div>
-              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-              <div className="w-3 h-3 rounded-full bg-green-500"></div>
-            </div>
-            <span className="text-sm text-gray-300 font-mono">
-              {currentSession?.environment || 'Terminal'}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="p-1 text-gray-400 hover:text-gray-300">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
-              </svg>
-            </button>
-          </div>
         </div>
 
         {/* Terminal Content */}
