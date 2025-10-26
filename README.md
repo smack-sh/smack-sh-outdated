@@ -107,12 +107,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Vite](https://vitejs.dev/) - Build tool
 - [TypeScript](https://www.typescriptlang.org/) - Type checking
 
-## 📧 Contact
-
-For any questions or feedback, please contact us at [maintainers@smack.sh](mailto:maintainers@smack.sh)
-
----
 
 <div align="center">
-Made with ❤️ by the Smack.sh team
+Made with ❤️ by this dude
+and confindence after 3 months of hard work
+
+  ![](https://github.com/user-attachments/assets/253449dc-0973-4ef2-acdb-c30f1194b463)
+
 </div>
