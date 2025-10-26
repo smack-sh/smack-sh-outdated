@@ -3,11 +3,13 @@ import { Timestamp, FieldValue } from 'firebase-admin/firestore';
 
 type DocumentData = import('firebase-admin/firestore').DocumentData;
 
+export type TerminalStatus = 'active' | 'inactive' | 'terminated';
+
 export interface TerminalSession {
   id: string;
   userId: string;
   name: string;
-  status: 'active' | 'inactive' | 'terminated';
+  status: TerminalStatus;
   environment: string;
   lastActivity: string;
   createdAt: string;
@@ -57,8 +59,7 @@ export async function createTerminalSession(
     const now = new Date().toISOString();
     
     // In a real app, you would save this to your database
-    const newSession: TerminalSession = {
-      id: Math.random().toString(36).substring(2, 9),
+    const newSession: Omit<TerminalSession, 'id'> = {
       userId,
       name,
       status: 'active',
@@ -67,8 +68,10 @@ export async function createTerminalSession(
       createdAt: now,
       updatedAt: now,
     };
-    
-    return newSession;
+
+    const docRef = await db.collection(terminalSessionsCollection).add(newSession);
+    const doc = await docRef.get();
+    return fromFirebaseDoc(doc);
   } catch (error) {
     console.error('Error creating terminal session:', error);
     throw new Error('Failed to create terminal session');
@@ -95,6 +98,7 @@ export async function updateTerminalSession(
     };
     
     return session;
+    
   } catch (error) {
     console.error('Error updating terminal session:', error);
     throw new Error('Failed to update terminal session');
