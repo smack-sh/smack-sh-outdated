@@ -115,8 +115,8 @@ Made with ❤️ by this dude and confindence after 3 months of hard work.
 
 </div>
 
-<div align="center>
-  <h2>
-  please report any bugs and if you make an alternitave to this app please let me know and if you wanna make it better you can reach me out at mahirusus@Gmail.com
-  </h2>
-  </div>
+<div>
+<h3>
+please report any bugs and if you make an alternitave to this app please let me know and if you wanna make it better you can reach me out at mahirusus@Gmail.com and for the alterniatve if you make one without me knowing about it and approving it I am going to talk legal actions
+</h3>
+</div>
