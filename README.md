@@ -98,7 +98,7 @@ Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTIN
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under a custom License please read the license fo information
 
 ## 🙏 Acknowledgements
 
@@ -109,9 +109,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 
 <div align="center">
-Made with ❤️ by this dude
-and confindence after 3 months of hard work
+Made with ❤️ by this dude and confindence after 3 months of hard work.
 
   ![](https://github.com/user-attachments/assets/253449dc-0973-4ef2-acdb-c30f1194b463)
 
 </div>
+
+<div align="center>
+  <h2>
+  please report any bugs and if you make an alternitave to this app please let me know and if you wanna make it better you can reach me out at mahirusus@Gmail.com
+  </h2>
+  </div>
