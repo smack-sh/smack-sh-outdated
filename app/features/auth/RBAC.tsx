@@ -1,144 +1,50 @@
+'use client';
+
 import { useState } from 'react';
 import { useLoaderData } from '@remix-run/react';
-import { json, type LoaderFunctionArgs } from '@remix-run/node';
-import { requireAuth } from '~/utils/auth.server';
+import type { Role, PermissionObject } from './types/rbac';
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const userId = await requireAuth({ request });
-
-  // Mock data - in real app, fetch from database
-  const roles = [
-    {
-      id: 'admin',
-      name: 'Administrator',
-      description: 'Full access to all features and settings',
-      permissions: [
-        'user_management',
-        'project_management',
-        'deployment_management',
-        'billing_management',
-        'system_configuration',
-        'audit_logs',
-        'api_access',
-        'feature_flags',
-      ],
-      userCount: 2,
-      color: 'red',
-    },
-    {
-      id: 'developer',
-      name: 'Developer',
-      description: 'Can create and manage projects',
-      permissions: [
-        'project_create',
-        'project_edit',
-        'deployment_create',
-        'code_edit',
-        'api_access',
-      ],
-      userCount: 8,
-      color: 'blue',
-    },
-    {
-      id: 'designer',
-      name: 'Designer',
-      description: 'Can view and edit designs',
-      permissions: [
-        'project_view',
-        'design_edit',
-        'asset_upload',
-      ],
-      userCount: 3,
-      color: 'green',
-    },
-    {
-      id: 'viewer',
-      name: 'Viewer',
-      description: 'Read-only access to projects',
-      permissions: [
-        'project_view',
-        'comment_view',
-      ],
-      userCount: 15,
-      color: 'gray',
-    },
-  ];
-
-  const permissions = [
-    { id: 'user_management', name: 'User Management', description: 'Create, edit, and delete user accounts' },
-    { id: 'project_management', name: 'Project Management', description: 'Create and manage projects' },
-    { id: 'deployment_management', name: 'Deployment Management', description: 'Deploy and manage deployments' },
-    { id: 'billing_management', name: 'Billing Management', description: 'Manage billing and subscriptions' },
-    { id: 'system_configuration', name: 'System Configuration', description: 'Configure system settings' },
-    { id: 'audit_logs', name: 'Audit Logs', description: 'View audit logs and activity' },
-    { id: 'api_access', name: 'API Access', description: 'Access to API endpoints' },
-    { id: 'feature_flags', name: 'Feature Flags', description: 'Manage feature flags' },
-    { id: 'project_create', name: 'Create Projects', description: 'Create new projects' },
-    { id: 'project_edit', name: 'Edit Projects', description: 'Edit existing projects' },
-    { id: 'project_view', name: 'View Projects', description: 'View project details' },
-    { id: 'deployment_create', name: 'Create Deployments', description: 'Create new deployments' },
-    { id: 'code_edit', name: 'Edit Code', description: 'Edit project code' },
-    { id: 'design_edit', name: 'Edit Designs', description: 'Edit project designs' },
-    { id: 'asset_upload', name: 'Upload Assets', description: 'Upload project assets' },
-    { id: 'comment_view', name: 'View Comments', description: 'View project comments' },
-  ];
-
-  return json({ roles, permissions });
-}
-
-export function RBAC() {
-  const { roles, permissions } = useLoaderData<typeof loader>();
+export default function RBAC() {
+  const { roles, permissions } = useLoaderData<typeof import('./RBAC.server').loader>();
   const [activeTab, setActiveTab] = useState<'roles' | 'permissions' | 'users'>('roles');
   const [isCreateRoleModalOpen, setIsCreateRoleModalOpen] = useState(false);
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Role-Based Access Control</h2>
-          <p className="text-gray-600 dark:text-gray-400">Manage roles, permissions, and user access</p>
-        </div>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Role-Based Access Control</h1>
         <button
           onClick={() => setIsCreateRoleModalOpen(true)}
-          className="px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500"
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
           Create Role
         </button>
       </div>
 
-      {/* Tabs */}
-      <div className="border-b border-gray-200 dark:border-gray-700">
+      <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
-          {[
-            { id: 'roles', label: 'Roles', icon: '👥' },
-            { id: 'permissions', label: 'Permissions', icon: '🔐' },
-            { id: 'users', label: 'User Assignments', icon: '👤' },
-          ].map((tab) => (
+          {['roles', 'permissions', 'users'].map((tab) => (
             <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center gap-2 py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === tab.id
-                  ? 'border-accent-500 text-accent-600 dark:text-accent-400'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+              key={tab}
+              onClick={() => setActiveTab(tab as any)}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === tab
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              <span>{tab.icon}</span>
-              {tab.label}
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
           ))}
         </nav>
       </div>
 
-      {/* Tab Content */}
-      <div className="min-h-[500px]">
+      <div className="mt-4">
         {activeTab === 'roles' && <RolesTab roles={roles} />}
         {activeTab === 'permissions' && <PermissionsTab permissions={permissions} />}
         {activeTab === 'users' && <UsersTab />}
       </div>
 
-      {/* Create Role Modal */}
       {isCreateRoleModalOpen && (
         <CreateRoleModal
           permissions={permissions}
@@ -149,56 +55,60 @@ export function RBAC() {
   );
 }
 
-function RolesTab({ roles }: { roles: any[] }) {
-  const getRoleColor = (color: string) => {
-    const colors = {
-      red: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
-      blue: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-      green: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-      gray: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300',
-    };
-    return colors[color as keyof typeof colors] || colors.gray;
-  };
-
+export function ErrorBoundary() {
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="p-4 bg-red-100 text-red-800 rounded">
+      <h2 className="font-bold text-lg mb-2">Error loading RBAC settings</h2>
+      <p>Please try again later or contact support if the issue persists.</p>
+    </div>
+  );
+}
+
+function RolesTab({ roles }: { roles: Role[] }) {
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {roles.map((role) => (
-          <div key={role.id} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-gray-900 dark:text-white">{role.name}</h3>
-              <span className={`px-2 py-1 text-xs rounded-full ${getRoleColor(role.color)}`}>
-                {role.userCount} users
+          <div
+            key={role.id}
+            className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="font-medium text-lg">{role.name}</h3>
+                <p className="text-gray-600 text-sm mt-1">{role.description}</p>
+                <div className="mt-2">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {role.userCount} users
+                  </span>
+                </div>
+              </div>
+              <span
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  role.color === 'red'
+                    ? 'bg-red-100 text-red-800'
+                    : role.color === 'blue'
+                    ? 'bg-blue-100 text-blue-800'
+                    : role.color === 'green'
+                    ? 'bg-green-100 text-green-800'
+                    : 'bg-gray-100 text-gray-800'
+                }`}
+              >
+                {role.id}
               </span>
             </div>
-
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              {role.description}
-            </p>
-
-            <div className="space-y-2 mb-4">
-              <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Permissions:</div>
-              <div className="flex flex-wrap gap-1">
-                {role.permissions.slice(0, 3).map((permissionId: string) => (
-                  <span key={permissionId} className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded">
-                    {permissionId.replace('_', ' ')}
+            <div className="mt-4">
+              <h4 className="text-sm font-medium text-gray-700 mb-2">Permissions:</h4>
+              <div className="flex flex-wrap gap-2">
+                {role.permissions.map((permission) => (
+                  <span
+                    key={permission}
+                    className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800"
+                  >
+                    {permission}
                   </span>
                 ))}
-                {role.permissions.length > 3 && (
-                  <span className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded">
-                    +{role.permissions.length - 3}
-                  </span>
-                )}
               </div>
-            </div>
-
-            <div className="flex gap-2">
-              <button className="flex-1 px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600">
-                Edit
-              </button>
-              <button className="flex-1 px-3 py-1 text-sm bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded hover:bg-red-200 dark:hover:bg-red-900/50">
-                Delete
-              </button>
             </div>
           </div>
         ))}
@@ -207,7 +117,7 @@ function RolesTab({ roles }: { roles: any[] }) {
   );
 }
 
-function PermissionsTab({ permissions }: { permissions: any[] }) {
+function PermissionsTab({ permissions }: { permissions: PermissionObject[] }) {
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredPermissions = permissions.filter(permission =>
