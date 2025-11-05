@@ -1,4 +1,4 @@
-import { AITerminal } from '~/features/terminal/AITerminal';
+import AITerminal from '~/features/terminal/AITerminal';
 
 export default function TerminalPage() {
   return (
