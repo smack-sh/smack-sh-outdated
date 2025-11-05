@@ -3,7 +3,7 @@
  */
 
 import { createScopedLogger } from '~/utils/logger';
-import { serverManager } from './server-manager';
+import { serverManager } from './server-manager.server';
 
 const logger = createScopedLogger('ResourceMonitor');
 

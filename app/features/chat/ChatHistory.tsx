@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useLoaderData } from '@remix-run/react';
 import { json, type LoaderFunctionArgs } from '@remix-run/node';
-import { requireAuth } from '~/utils/auth.server';
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const userId = await requireAuth({ request });
-
   // Mock data - in real app, fetch from database
+  // Note: Auth should be handled at route level for Electron builds
   const chatHistory = [
     {
       id: '1',

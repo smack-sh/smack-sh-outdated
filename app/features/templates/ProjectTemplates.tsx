@@ -2,9 +2,23 @@ import { useState } from 'react';
 import { useLoaderData, Link } from '@remix-run/react';
 import { json, type LoaderFunctionArgs } from '@remix-run/node';
 
+interface Template {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  language: string;
+  features: string[];
+  difficulty: string;
+  stars: number;
+  downloads: number;
+  preview: string;
+  tags: string[];
+}
+
 export async function loader({ request }: LoaderFunctionArgs) {
   // Mock data - in real app, fetch from database or file system
-  const templates = [
+  const templates: Template[] = [
     {
       id: 'react-vite',
       name: 'React + Vite',
@@ -97,6 +111,19 @@ export async function loader({ request }: LoaderFunctionArgs) {
       tags: ['fastify', 'nodejs', 'api', 'postgresql'],
     },
     {
+      id: 'example-ai-chatbot',
+      name: 'AI Chatbot',
+      description: 'A chatbot with AI capabilities',
+      category: 'Fullstack',
+      language: 'TypeScript',
+      features: ['AI', 'Chatbot', 'TypeScript', 'Tailwind CSS', 'Prisma'],
+      difficulty: 'Advanced',
+      stars: 4.9,
+      downloads: 1200,
+      preview: 'https://via.placeholder.com/300x200?text=AI+Chatbot',
+      tags: ['ai', 'chatbot', 'fullstack', 'typescript', 'gemini']
+    },
+    {
       id: 'electron-app',
       name: 'Electron Desktop App',
       description: 'Cross-platform desktop application',
@@ -181,7 +208,7 @@ export function ProjectTemplates() {
   );
 }
 
-function TemplateCard({ template }: { template: any }) {
+function TemplateCard({ template }: { template: Template }) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (

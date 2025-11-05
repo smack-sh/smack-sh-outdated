@@ -1,4 +1,4 @@
-declare module 'istextorbinary' {
+ declare module 'istextorbinary' {
   export interface Options {
     /**
      * How many bytes to check at the start.

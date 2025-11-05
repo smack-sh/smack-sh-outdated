@@ -5,7 +5,7 @@
 import type { LanguageModelV1, LanguageModelV1CallOptions, LanguageModelV1FinishReason, LanguageModelV1StreamPart } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
 import { requestManager } from './request-manager';
-import { serverManager } from './server-manager';
+import { serverManager } from './server-manager.server';
 import { createScopedLogger } from '~/utils/logger';
 
 const logger = createScopedLogger('SmackModelWrapper');

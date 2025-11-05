@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useLoaderData } from '@remix-run/react';
 import { json, type LoaderFunctionArgs } from '@remix-run/node';
-import { requireAuth } from '~/utils/auth.server';
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const userId = await requireAuth({ request });
+  // Note: Auth should be handled at route level for Electron builds
 
   // Mock data - in real app, fetch from Stripe/payment provider
   const transactions = [

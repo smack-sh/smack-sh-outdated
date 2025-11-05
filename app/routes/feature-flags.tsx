@@ -1,4 +1,4 @@
-import { FeatureFlags } from '~/features/flags/FeatureFlags';
+import FeatureFlags from '~/features/flags/FeatureFlags';
 
 export default function FeatureFlagsPage() {
   return (

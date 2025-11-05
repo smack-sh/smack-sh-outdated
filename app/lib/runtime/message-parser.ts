@@ -301,8 +301,6 @@ export class StreamingMessageParser {
 
             break;
           } else if (!ARTIFACT_TAG_OPEN.startsWith(potentialTag)) {
-            output += input.slice(i, j + 1);
-            i = j + 1;
             break;
           }
 

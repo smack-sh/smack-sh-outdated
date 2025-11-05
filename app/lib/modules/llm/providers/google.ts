@@ -4,7 +4,7 @@ import type { IProviderSetting } from '~/types/model';
 import type { LanguageModelV1 } from 'ai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createOpenAI } from '@ai-sdk/openai';
-import { serverManager } from '~/lib/modules/smack/server-manager';
+import { serverManager } from '~/lib/modules/smack/server-manager.server';
 import { requestManager } from '~/lib/modules/smack/request-manager';
 
 export default class GoogleProvider extends BaseProvider {

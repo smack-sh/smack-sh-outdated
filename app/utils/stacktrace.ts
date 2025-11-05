@@ -44,3 +44,21 @@ export function getCurrentPosition(): { file: string; line: number; column: numb
 export function formatPosition(pos: { file: string; line: number; column: number }): string {
   return `${pos.file}:${pos.line}:${pos.column}`;
 }
+
+/**
+ * Cleans up a stack trace by removing noise and formatting it nicely
+ */
+export function cleanStackTrace(stack: string): string {
+  if (!stack) return '';
+  
+  return stack
+    .split('\n')
+    .filter(line => {
+      // Remove webpack/vite internals
+      if (line.includes('webpack') || line.includes('vite') || line.includes('node_modules')) {
+        return false;
+      }
+      return true;
+    })
+    .join('\n');
+}

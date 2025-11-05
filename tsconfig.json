@@ -1,4 +1,4 @@
-{
+ {
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "types": [
