@@ -472,48 +472,74 @@ export function GitHubDeploymentDialog({ isOpen, onClose, projectName, files }: 
     } catch (error) {
       console.error('Error pushing to GitHub:', error);
 
-      // Attempt to extract more specific error information
+      // Attempt to extract more specific error information using structured parsing
       let errorMessage = 'Failed to push to GitHub';
       let isRetryable = false;
 
-      if (error instanceof Error) {
+      // Parse Octokit/GitHub API errors (they have structured properties)
+      if (error && typeof error === 'object') {
+        const errorObj = error as Record<string, unknown>;
+        
+        // Check for HTTP status code (most reliable)
+        if (typeof errorObj.status === 'number') {
+          const status = errorObj.status;
+          
+          if (status === 401) {
+            errorMessage = 'GitHub authentication failed. Please check your access token in Settings > Connections.';
+          } else if (status === 403) {
+            errorMessage = 'Access denied. Your GitHub token may not have sufficient permissions to create/modify repositories.';
+          } else if (status === 404) {
+            errorMessage = 'Repository or resource not found. Please check the repository name and your permissions.';
+          } else if (status === 422) {
+            const message = String(errorObj.message || '').toLowerCase();
+            if (message.includes('name already exists') || message.includes('already exists')) {
+              errorMessage = 'A repository with this name already exists in your account. Please choose a different name.';
+            } else {
+              errorMessage = 'Repository validation failed. Please check the repository name and settings.';
+            }
+          } else if (status === 429) {
+            errorMessage = 'GitHub API rate limit exceeded. Please wait a moment and try again.';
+            isRetryable = true;
+          } else if (status >= 500) {
+            errorMessage = 'GitHub server error. Please try again later.';
+            isRetryable = true;
+          } else {
+            errorMessage = errorObj.message ? `GitHub API error: ${String(errorObj.message)}` : errorMessage;
+          }
+        }
+        
+        // Check for error message property
+        if (errorObj.message && typeof errorObj.message === 'string') {
+          const msg = errorObj.message.toLowerCase();
+          
+          // Only use string matching as fallback if status code parsing didn't work
+          if (typeof errorObj.status !== 'number') {
+            if (msg.includes('network') || msg.includes('fetch failed') || msg.includes('connection')) {
+              errorMessage = 'Network error. Please check your internet connection and try again.';
+              isRetryable = true;
+            } else if (msg.includes('timeout')) {
+              errorMessage = 'Request timed out. Please check your connection and try again.';
+              isRetryable = true;
+            }
+          }
+        }
+        
+        // Log GitHub API documentation URL if available
+        if ('documentation_url' in errorObj) {
+          console.log('GitHub API documentation:', errorObj.documentation_url);
+        }
+      } else if (error instanceof Error) {
+        // Fallback for generic Error objects
         const errorMsg = error.message.toLowerCase();
-
+        
         if (errorMsg.includes('network') || errorMsg.includes('fetch failed') || errorMsg.includes('connection')) {
           errorMessage = 'Network error. Please check your internet connection and try again.';
-          isRetryable = true;
-        } else if (errorMsg.includes('401') || errorMsg.includes('unauthorized')) {
-          errorMessage = 'GitHub authentication failed. Please check your access token in Settings > Connections.';
-        } else if (errorMsg.includes('403') || errorMsg.includes('forbidden')) {
-          errorMessage =
-            'Access denied. Your GitHub token may not have sufficient permissions to create/modify repositories.';
-        } else if (errorMsg.includes('404') || errorMsg.includes('not found')) {
-          errorMessage = 'Repository or resource not found. Please check the repository name and your permissions.';
-        } else if (errorMsg.includes('422') || errorMsg.includes('validation failed')) {
-          if (errorMsg.includes('name already exists')) {
-            errorMessage =
-              'A repository with this name already exists in your account. Please choose a different name.';
-          } else {
-            errorMessage = 'Repository validation failed. Please check the repository name and settings.';
-          }
-        } else if (errorMsg.includes('rate limit') || errorMsg.includes('429')) {
-          errorMessage = 'GitHub API rate limit exceeded. Please wait a moment and try again.';
           isRetryable = true;
         } else if (errorMsg.includes('timeout')) {
           errorMessage = 'Request timed out. Please check your connection and try again.';
           isRetryable = true;
         } else {
           errorMessage = `GitHub error: ${error.message}`;
-        }
-      } else if (typeof error === 'object' && error !== null) {
-        // Octokit errors
-        if ('message' in error) {
-          errorMessage = `GitHub API error: ${error.message as string}`;
-        }
-
-        // GitHub API errors
-        if ('documentation_url' in error) {
-          console.log('GitHub API documentation:', error.documentation_url);
         }
       }
 

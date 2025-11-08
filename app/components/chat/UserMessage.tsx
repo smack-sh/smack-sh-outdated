@@ -40,16 +40,20 @@ export function UserMessage({ content, parts }: UserMessageProps) {
         <div className="flex flex-row items-start justify-center overflow-hidden shrink-0 self-start">
           {profile?.avatar || profile?.username ? (
             <div className="flex items-end gap-2">
-              <img
-                src={profile.avatar}
-                alt={profile?.username || 'User'}
-                className="w-[25px] h-[25px] object-cover rounded-full"
-                loading="eager"
-                decoding="sync"
-              />
-              <span className="text-smack-elements-textPrimary text-sm">
-                {profile?.username ? profile.username : ''}
-              </span>
+              {profile?.avatar && (
+                <img
+                  src={profile.avatar}
+                  alt={profile?.username || 'User'}
+                  className="w-[25px] h-[25px] object-cover rounded-full"
+                  loading="eager"
+                  decoding="sync"
+                />
+              )}
+              {profile?.username && (
+                <span className="text-smack-elements-textPrimary text-sm">
+                  {profile.username}
+                </span>
+              )}
             </div>
           ) : (
             <div className="i-ph:user-fill text-accent-500 text-2xl" />
