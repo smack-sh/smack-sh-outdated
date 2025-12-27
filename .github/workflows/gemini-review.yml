@@ -1,4 +1,4 @@
-name: Gemini AI Code Reviewer
+name: Gemini AI Review on Mention
 
 on:
   issue_comment:
@@ -9,11 +9,11 @@ permissions:
   contents: write
 
 jobs:
-  gemini-review:
+  review:
     runs-on: ubuntu-latest
     if: |
       github.event.issue.pull_request &&
-      contains(github.event.comment.body, '/gemini-review')
+      contains(github.event.comment.body, '@gemini review')
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -25,5 +25,4 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          # Optional: model variant
-          GEMINI_MODEL: gemini-2.5-pro
+          GEMINI_MODEL: gemini-3‑pro
