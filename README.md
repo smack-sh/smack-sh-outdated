@@ -201,7 +201,7 @@ This project is licensed under a custom License please read the license fo infor
 
 
 <div align="center">
-Made with ❤️ by this dude and confindence after 3 months of hard work.
+Made with ❤️ by this dude and confindence after 3 months of hard work. of transforming the bolt.diy repo
 
   ![](https://github.com/user-attachments/assets/253449dc-0973-4ef2-acdb-c30f1194b463)
 
