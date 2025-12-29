@@ -1,3 +1,7 @@
+``` 
+⚠️ This platform is in extreme early stage of development so do expect to see a bun of error ⚠️
+```
+
 # Smack.sh - AI Agent Platform
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
