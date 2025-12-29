@@ -119,6 +119,8 @@ Smack.sh is a powerful AI agent platform that provides seamless integration with
 - [ ] flutter and react native support
 - [ ] making a custom web view and a rela mobile veiw for flutter and desktop without the need of webcontainers to be more flexible with our own needs
 - [ ] Switching to tauri from electron for better performance on our desktop version that is in internal beta
+- [ ] Working on a cli
+- [ ] Working on an ide(not the one listed as smack-ide that is no loner maintained)
  ## what ever feature you would like to request for me to add feel free to react out Mahirusus@gmail.com
 ## 🚀 Quick Start
 
