@@ -9,8 +9,8 @@
  * @returns The sampled function, which will have a `void` return type as the original function's execution is asynchronous.
  */
 export function createSampler<T extends (...args: any[]) => any>(
-  fn: T, 
-  sampleInterval: number
+  fn: T,
+  sampleInterval: number,
 ): (...args: Parameters<T>) => void {
   let lastArgs: Parameters<T> | null = null;
   let lastTime = 0; // The time when the last *sampled* (executed) call occurred.
@@ -20,18 +20,23 @@ export function createSampler<T extends (...args: any[]) => any>(
     const now = Date.now();
     lastArgs = args; // Always store the latest arguments received, for a potential trailing call.
 
-    // If we are within the current sampling interval (i.e., less than `sampleInterval` ms
-    // has passed since the last *executed* call).
+    /*
+     * If we are within the current sampling interval (i.e., less than `sampleInterval` ms
+     * has passed since the last *executed* call).
+     */
     if (now - lastTime < sampleInterval) {
-      // If no trailing call is currently scheduled, schedule one.
-      // If one is already scheduled, we just updated `lastArgs`, so it will use the newest args.
+      /*
+       * If no trailing call is currently scheduled, schedule one.
+       * If one is already scheduled, we just updated `lastArgs`, so it will use the newest args.
+       */
       if (!timeout) {
         timeout = setTimeout(
           () => {
             timeout = null; // Clear the timeout reference
             lastTime = Date.now(); // Update lastTime, as this trailing call effectively starts a new interval.
 
-            if (lastArgs) { // Execute the function with the last captured arguments.
+            if (lastArgs) {
+              // Execute the function with the last captured arguments.
               fn.apply(this, lastArgs);
               lastArgs = null; // Clear lastArgs after execution.
             }
@@ -39,13 +44,16 @@ export function createSampler<T extends (...args: any[]) => any>(
           sampleInterval - (now - lastTime), // Wait for the remaining time of the current interval.
         );
       }
+
       return; // The current call is either dropped or becomes the `lastArgs` for a scheduled trailing call.
     }
 
-    // If we are outside the interval (i.e., `sampleInterval` ms or more has passed
-    // since the last *executed* call).
-    // This call should be executed immediately.
-    // Any previously scheduled trailing call must be cleared as this immediate call "takes its place".
+    /*
+     * If we are outside the interval (i.e., `sampleInterval` ms or more has passed
+     * since the last *executed* call).
+     * This call should be executed immediately.
+     * Any previously scheduled trailing call must be cleared as this immediate call "takes its place".
+     */
     if (timeout) {
       clearTimeout(timeout);
       timeout = null;

@@ -78,7 +78,7 @@ export default function ProfileTab() {
                 'hover:shadow-lg hover:shadow-red-500/10',
               )}
             >
-              {profile?.avatar ? (
+              {profile.avatar ? (
                 <img
                   src={profile.avatar}
                   alt="Profile"
@@ -133,7 +133,7 @@ export default function ProfileTab() {
               </div>
               <input
                 type="text"
-                value={profile?.username || ''}
+                value={profile.username}
                 onChange={(e) => handleProfileUpdate('username', e.target.value)}
                 className={classNames(
                   'w-full pl-11 pr-4 py-2.5 rounded-xl',
@@ -157,7 +157,7 @@ export default function ProfileTab() {
                 <div className="i-ph:text-aa w-5 h-5 text-gray-400 dark:text-gray-500 transition-colors group-focus-within:text-red-500" />
               </div>
               <textarea
-                value={profile?.bio || ''}
+                value={profile.bio}
                 onChange={(e) => handleProfileUpdate('bio', e.target.value)}
                 className={classNames(
                   'w-full pl-11 pr-4 py-2.5 rounded-xl',

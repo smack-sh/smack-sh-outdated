@@ -3,7 +3,7 @@
  */
 
 import { createScopedLogger } from '~/utils/logger';
-import { serverManager } from './server-manager';
+import { serverManager } from './server-manager.server';
 
 const logger = createScopedLogger('ResourceMonitor');
 
@@ -67,6 +67,7 @@ export class ResourceMonitor {
     if (!ResourceMonitor.instance) {
       ResourceMonitor.instance = new ResourceMonitor();
     }
+
     return ResourceMonitor.instance;
   }
 
@@ -162,7 +163,7 @@ export class ResourceMonitor {
     }
 
     const latest = this.resourceHistory[this.resourceHistory.length - 1];
-    
+
     return (
       latest.memory.percentage > this.thresholds.maxMemoryPercent ||
       latest.cpu.usage > this.thresholds.maxCpuPercent ||
@@ -192,11 +193,11 @@ export class ResourceMonitor {
     }
 
     const recent = this.resourceHistory.slice(-10); // Last 10 readings
-    
+
     const avgMemory = recent.reduce((sum, stat) => sum + stat.memory.percentage, 0) / recent.length;
     const avgCpu = recent.reduce((sum, stat) => sum + stat.cpu.usage, 0) / recent.length;
     const avgResponseTime = recent.reduce((sum, stat) => sum + stat.server.averageResponseTime, 0) / recent.length;
-    
+
     return {
       averageMemoryUsage: Math.round(avgMemory * 100) / 100,
       averageCpuUsage: Math.round(avgCpu * 100) / 100,
@@ -211,16 +212,16 @@ export class ResourceMonitor {
    */
   private async collectResourceStats(): Promise<ResourceStats> {
     const timestamp = Date.now();
-    
+
     // Get system memory info
     const memoryInfo = await this.getSystemMemoryInfo();
-    
+
     // Get CPU info
     const cpuInfo = await this.getCpuInfo();
-    
+
     // Get server metrics
     const serverInfo = await this.getServerInfo();
-    
+
     return {
       memory: memoryInfo,
       cpu: cpuInfo,
@@ -237,7 +238,7 @@ export class ResourceMonitor {
     try {
       // Try to get memory info from server metrics first
       const metrics = await serverManager.getMetrics();
-      
+
       if (metrics?.memory) {
         return {
           used: metrics.memory.used,
@@ -253,7 +254,7 @@ export class ResourceMonitor {
     // Fallback: estimate based on Node.js process memory
     const memUsage = process.memoryUsage();
     const totalMemory = 8 * 1024 * 1024 * 1024; // Assume 8GB default
-    
+
     return {
       used: memUsage.heapUsed + memUsage.external,
       total: totalMemory,
@@ -269,7 +270,7 @@ export class ResourceMonitor {
     try {
       // Try to get CPU info from server metrics
       const metrics = await serverManager.getMetrics();
-      
+
       if (metrics?.cpu) {
         return {
           usage: metrics.cpu.usage,
@@ -284,7 +285,7 @@ export class ResourceMonitor {
     // Fallback: estimate based on process CPU usage
     const cpuUsage = process.cpuUsage();
     const cores = require('os').cpus().length;
-    
+
     return {
       usage: 0, // Can't easily calculate without external tools
       cores,
@@ -299,7 +300,7 @@ export class ResourceMonitor {
     try {
       const status = await serverManager.getStatus();
       const metrics = await serverManager.getMetrics();
-      
+
       if (metrics) {
         return {
           queueLength: metrics.model.queue_length,
@@ -341,12 +342,13 @@ export class ResourceMonitor {
 
     const previous = this.resourceHistory[this.resourceHistory.length - 1];
     const timeDiff = (Date.now() - previous.timestamp) / 1000 / 60; // minutes
-    
+
     if (timeDiff === 0) {
       return 0;
     }
 
     const requestDiff = totalRequests - (previous.server.requestsPerMinute || 0);
+
     return Math.round(requestDiff / timeDiff);
   }
 
@@ -355,7 +357,7 @@ export class ResourceMonitor {
    */
   private addToHistory(stats: ResourceStats): void {
     this.resourceHistory.push(stats);
-    
+
     // Keep only the most recent entries
     if (this.resourceHistory.length > this.maxHistorySize) {
       this.resourceHistory = this.resourceHistory.slice(-this.maxHistorySize);
@@ -367,7 +369,7 @@ export class ResourceMonitor {
    */
   private checkThresholds(stats: ResourceStats): void {
     const alerts: ResourceAlert[] = [];
-    
+
     // Memory threshold check
     if (stats.memory.percentage > this.thresholds.maxMemoryPercent) {
       alerts.push({
@@ -428,16 +430,16 @@ export class ResourceMonitor {
   private addAlert(alert: ResourceAlert): void {
     // Avoid duplicate alerts within a short time window
     const recentSimilar = this.alerts.find(
-      existing => 
-        existing.type === alert.type && 
+      (existing) =>
+        existing.type === alert.type &&
         existing.severity === alert.severity &&
-        (alert.timestamp - existing.timestamp) < 60000 // Within 1 minute
+        alert.timestamp - existing.timestamp < 60000, // Within 1 minute
     );
 
     if (!recentSimilar) {
       this.alerts.push(alert);
       logger.warn(`Resource alert: ${alert.message}`);
-      
+
       // Keep only the most recent alerts
       if (this.alerts.length > this.maxAlerts) {
         this.alerts = this.alerts.slice(-this.maxAlerts);

@@ -16,7 +16,7 @@ export async function action({ request }: ActionFunctionArgs) {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session;
       const userId = session.metadata?.userId;
-      
+
       if (userId) {
         await addCreditsToUser(userId, session.amount_total! / 100);
       }

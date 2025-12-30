@@ -16,10 +16,12 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
-    line_items: [{
-      price: priceId,
-      quantity: 1,
-    }],
+    line_items: [
+      {
+        price: priceId,
+        quantity: 1,
+      },
+    ],
     mode: 'payment',
     success_url: `${process.env.APP_URL}/dashboard?payment=success`,
     cancel_url: `${process.env.APP_URL}/pricing?payment=cancelled`,

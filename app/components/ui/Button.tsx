@@ -7,7 +7,8 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-smack-elements-background text-smack-elements-textPrimary hover:bg-smack-elements-background-depth-2',
+        default:
+          'bg-smack-elements-background text-smack-elements-textPrimary hover:bg-smack-elements-background-depth-2',
         destructive: 'bg-red-500 text-white hover:bg-red-600',
         outline:
           'border border-smack-elements-borderColor bg-transparent hover:bg-smack-elements-background-depth-2 hover:text-smack-elements-textPrimary text-smack-elements-textPrimary dark:border-smack-elements-borderColorActive',

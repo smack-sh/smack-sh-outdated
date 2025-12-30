@@ -6,6 +6,7 @@ export interface Feature {
   category: string;
   priority: 'low' | 'medium' | 'high';
   targetRelease?: string;
+  component?: () => Promise<{ default: React.ComponentType<any> }>;
 }
 
 export const features: Feature[] = [
@@ -16,15 +17,20 @@ export const features: Feature[] = [
     status: 'released',
     category: 'Code',
     priority: 'high',
-    targetRelease: 'v1.0.0'
+    targetRelease: 'v1.0.0',
   },
+
   // Add more features as needed
 ];
 
 export function getFeaturesByStatus(status: Feature['status']) {
-  return features.filter(feature => feature.status === status);
+  return features.filter((feature) => feature.status === status);
 }
 
 export function getAllCategories() {
-  return Array.from(new Set(features.map(feature => feature.category)));
+  return Array.from(new Set(features.map((feature) => feature.category)));
+}
+
+export function getFeatureById(id: string): Feature | undefined {
+  return features.find((feature) => feature.id === id);
 }

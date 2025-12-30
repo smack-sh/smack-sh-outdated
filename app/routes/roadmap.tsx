@@ -16,22 +16,38 @@ export default function RoadmapPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Team Management</h4>
-                <FeatureLoader featureId="team_management" fallback={<div className="p-6 bg-gray-100 dark:bg-gray-700 rounded-lg">Loading team management...</div>} />
+                <FeatureLoader
+                  featureId="team_management"
+                  fallback={
+                    <div className="p-6 bg-gray-100 dark:bg-gray-700 rounded-lg">Loading team management...</div>
+                  }
+                />
               </div>
 
               <div className="space-y-4">
                 <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Project Templates</h4>
-                <FeatureLoader featureId="project_templates" fallback={<div className="p-6 bg-gray-100 dark:bg-gray-700 rounded-lg">Loading project templates...</div>} />
+                <FeatureLoader
+                  featureId="project_templates"
+                  fallback={
+                    <div className="p-6 bg-gray-100 dark:bg-gray-700 rounded-lg">Loading project templates...</div>
+                  }
+                />
               </div>
 
               <div className="space-y-4">
                 <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Code Snippets</h4>
-                <FeatureLoader featureId="code_snippet_manager" fallback={<div className="p-6 bg-gray-100 dark:bg-gray-700 rounded-lg">Loading code snippets...</div>} />
+                <FeatureLoader
+                  featureId="code_snippet_manager"
+                  fallback={<div className="p-6 bg-gray-100 dark:bg-gray-700 rounded-lg">Loading code snippets...</div>}
+                />
               </div>
 
               <div className="space-y-4">
                 <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Theme Manager</h4>
-                <FeatureLoader featureId="dark_light_theme" fallback={<div className="p-6 bg-gray-100 dark:bg-gray-700 rounded-lg">Loading theme manager...</div>} />
+                <FeatureLoader
+                  featureId="dark_light_theme"
+                  fallback={<div className="p-6 bg-gray-100 dark:bg-gray-700 rounded-lg">Loading theme manager...</div>}
+                />
               </div>
             </div>
           </div>

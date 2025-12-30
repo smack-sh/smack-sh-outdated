@@ -10,15 +10,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export async function sendBugReport({
-  email,
-  subject,
-  message,
-}: {
-  email: string;
-  subject: string;
-  message: string;
-}) {
+export async function sendBugReport({ email, subject, message }: { email: string; subject: string; message: string }) {
   try {
     await transporter.sendMail({
       from: `"Smack Support" <${process.env.SMTP_FROM}>`,

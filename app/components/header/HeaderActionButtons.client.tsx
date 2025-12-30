@@ -24,7 +24,7 @@ export function HeaderActionButtons({ chatStarted: _chatStarted }: HeaderActionB
         <div className="flex border border-smack-elements-borderColor rounded-md overflow-hidden text-sm">
           <button
             onClick={() =>
-              window.open('https://github.com/stackblitz-labs/smack.sh/issues/new?template=bug_report.yml', '_blank')
+              window.open('https://github.com/smack-sh/smack.sh/issues/new?template=bug_report.yml', '_blank')
             }
             className="rounded-l-md items-center justify-center [&:is(:disabled,.disabled)]:cursor-not-allowed [&:is(:disabled,.disabled)]:opacity-60 px-3 py-1.5 text-xs bg-accent-500 text-white hover:text-smack-elements-item-contentAccent [&:not(:disabled,.disabled)]:hover:bg-smack-elements-button-primary-backgroundHover outline-accent-500 flex gap-1.5"
             title="Report Bug"

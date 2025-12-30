@@ -32,6 +32,7 @@ import { StickToBottom, useStickToBottomContext } from '~/lib/hooks';
 import { ChatBox } from './ChatBox';
 import type { DesignScheme } from '~/types/design-scheme';
 import type { ElementInfo } from '~/components/workbench/Inspector';
+import { isMobile } from '~/utils/mobile';
 import LlmErrorAlert from './LLMApiAlert';
 
 const TEXTAREA_MIN_HEIGHT = 76;
@@ -70,8 +71,9 @@ interface BaseChatProps {
   clearSupabaseAlert?: () => void;
   deployAlert?: DeployAlert;
   clearDeployAlert?: () => void;
-  llmErrorAlert?: LlmErrorAlertType;
+  llmErrorAlert?: LlmErrorAlertType & { retryable?: boolean };
   clearLlmErrorAlert?: () => void;
+  onRetry?: () => void;
   data?: JSONValue[] | undefined;
   chatMode?: 'discuss' | 'build';
   setChatMode?: (mode: 'discuss' | 'build') => void;
@@ -119,6 +121,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
       clearSupabaseAlert,
       llmErrorAlert,
       clearLlmErrorAlert,
+      onRetry,
       data,
       chatMode,
       setChatMode,
@@ -144,6 +147,11 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
     const [progressAnnotations, setProgressAnnotations] = useState<ProgressAnnotation[]>([]);
     const expoUrl = useStore(expoUrlAtom);
     const [qrModalOpen, setQrModalOpen] = useState(false);
+    const [isMobileView, setIsMobileView] = useState(false);
+
+    useEffect(() => {
+      setIsMobileView(isMobile());
+    }, []);
 
     useEffect(() => {
       if (expoUrl) {
@@ -345,7 +353,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
         className={classNames(styles.BaseChat, 'relative flex h-full w-full overflow-hidden')}
         data-chat-visible={showChat}
       >
-        <ClientOnly>{() => <Menu />}</ClientOnly>
+        <ClientOnly>{() => !isMobileView && <Menu />}</ClientOnly>
         <div className="flex flex-col lg:flex-row overflow-y-auto w-full h-full">
           <div className={classNames(styles.Chat, 'flex flex-col flex-grow lg:min-w-[var(--chat-min-width)] h-full')}>
             {!chatStarted && (
@@ -354,7 +362,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                   Where you can start shutting down the smack talkers
                 </h1>
                 <p className="text-md lg:text-xl mb-8 text-smack-elements-textSecondary animate-fade-in animation-delay-200">
-                  Bring Smack talkers down 
+                  Bring Smack talkers down
                 </p>
               </div>
             )}
@@ -421,7 +429,13 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                       }}
                     />
                   )}
-                  {llmErrorAlert && <LlmErrorAlert alert={llmErrorAlert} clearAlert={() => clearLlmErrorAlert?.()} />}
+                  {llmErrorAlert && (
+                    <LlmErrorAlert
+                      alert={llmErrorAlert}
+                      clearAlert={() => clearLlmErrorAlert?.()}
+                      onRetry={onRetry}
+                    />
+                  )}
                 </div>
                 {progressAnnotations && <ProgressCompilation data={progressAnnotations} />}
                 <ChatBox
@@ -490,9 +504,11 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
             </div>
           </div>
           <ClientOnly>
-            {() => (
-              <Workbench chatStarted={chatStarted} isStreaming={isStreaming} setSelectedElement={setSelectedElement} />
-            )}
+            {() =>
+              !isMobileView && (
+                <Workbench chatStarted={chatStarted} isStreaming={isStreaming} setSelectedElement={setSelectedElement} />
+              )
+            }
           </ClientOnly>
         </div>
       </div>

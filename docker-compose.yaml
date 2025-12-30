@@ -7,7 +7,7 @@ services:
       target: smack-ai-production
     ports:
       - '5173:5173'
-    env_file: 
+    env_file:
       - '.env'
       - '.env.local'
     environment:
@@ -39,7 +39,7 @@ services:
     image: smack-ai:development
     build:
       target: smack-ai-development
-    env_file: 
+    env_file:
       - '.env'
       - '.env.local'
     environment:
@@ -78,7 +78,7 @@ services:
     profiles: ['development', 'default']
 
   app-prebuild:
-    image: ghcr.io/stackblitz-labs/smack.sh:latest
+    image: ghcr.io/smack-sh/smack.sh:latest
     ports:
       - '5173:5173'
     environment:

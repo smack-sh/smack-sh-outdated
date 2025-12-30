@@ -3,9 +3,23 @@ import { BaseProvider } from './base-provider';
 import type { ModelInfo, ProviderInfo } from './types';
 import * as providers from './registry';
 import { createScopedLogger } from '~/utils/logger';
-import { serverManager } from '~/lib/modules/smack/server-manager';
 
 const logger = createScopedLogger('LLMManager');
+
+// Lazy load server manager only on server-side
+function getServerManager(): any {
+  if (typeof window === 'undefined' && typeof process !== 'undefined') {
+    try {
+      // Use dynamic import to avoid bundling server code in client
+      const serverManagerModule = eval('require')('~/lib/modules/smack/server-manager.server');
+      return serverManagerModule?.serverManager || null;
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
+}
 export class LLMManager {
   private static _instance: LLMManager;
   private _providers: Map<string, BaseProvider> = new Map();
@@ -16,17 +30,24 @@ export class LLMManager {
   private constructor(_env: Record<string, string>) {
     this._registerProvidersFromDirectory();
     this._env = _env;
-    
+
     // Initialize Smack-7B server manager
     this._initializeSmackServer();
   }
 
   private async _initializeSmackServer() {
     try {
+      const serverManager = getServerManager();
+
+      if (!serverManager) {
+        // Server manager not available (client-side), skip initialization
+        return;
+      }
+
       logger.info('Initializing Smack-7B server...');
-      
+
       // Start the server in the background
-      serverManager.startServer().catch(error => {
+      serverManager.startServer().catch((error) => {
         logger.warn('Failed to start Smack-7B server:', error);
       });
 
@@ -42,12 +63,17 @@ export class LLMManager {
       if (this._isShuttingDown) {
         return;
       }
-      
+
       this._isShuttingDown = true;
       logger.info('LLMManager shutting down...');
-      
+
       try {
-        await serverManager.shutdown();
+        const serverManager = getServerManager();
+
+        if (serverManager) {
+          await serverManager.shutdown();
+        }
+
         logger.info('LLMManager shutdown complete');
       } catch (error) {
         logger.error('Error during LLMManager shutdown:', error);
@@ -58,7 +84,7 @@ export class LLMManager {
     process.on('SIGINT', cleanup);
     process.on('SIGTERM', cleanup);
     process.on('exit', cleanup);
-    
+
     // Handle uncaught exceptions
     process.on('uncaughtException', async (error) => {
       logger.error('Uncaught exception:', error);
@@ -80,12 +106,17 @@ export class LLMManager {
     if (this._isShuttingDown) {
       return;
     }
-    
+
     this._isShuttingDown = true;
     logger.info('Manual LLMManager shutdown initiated...');
-    
+
     try {
-      await serverManager.shutdown();
+      const serverManager = getServerManager();
+
+      if (serverManager) {
+        await serverManager.shutdown();
+      }
+
       logger.info('LLMManager shutdown complete');
     } catch (error) {
       logger.error('Error during manual LLMManager shutdown:', error);

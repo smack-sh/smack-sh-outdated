@@ -1,8 +1,10 @@
 import { type ActionFunctionArgs, type LoaderFunctionArgs, json } from '@remix-run/cloudflare';
 import type { VercelProjectInfo } from '~/types/vercel';
 
-// ADMIN ONLY: All deployments use admin API keys
-// Users cannot deploy with their own keys - centralized control
+/*
+ * ADMIN ONLY: All deployments use admin API keys
+ * Users cannot deploy with their own keys - centralized control
+ */
 const ADMIN_VERCEL_TOKEN = process.env.VITE_VERCEL_ACCESS_TOKEN;
 
 // Function to detect framework from project files
@@ -180,7 +182,7 @@ const detectFramework = (files: Record<string, string>): string => {
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const projectId = url.searchParams.get('projectId');
-  
+
   // FORCE USE OF ADMIN TOKEN - Users cannot use their own keys
   const token = ADMIN_VERCEL_TOKEN;
 

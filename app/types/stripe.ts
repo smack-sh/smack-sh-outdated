@@ -62,7 +62,14 @@ export interface StripePaymentIntent {
   id: string;
   amount: number;
   currency: string;
-  status: 'requires_payment_method' | 'requires_confirmation' | 'requires_action' | 'processing' | 'requires_capture' | 'canceled' | 'succeeded';
+  status:
+    | 'requires_payment_method'
+    | 'requires_confirmation'
+    | 'requires_action'
+    | 'processing'
+    | 'requires_capture'
+    | 'canceled'
+    | 'succeeded';
   customer?: string;
   description?: string;
   created: number;

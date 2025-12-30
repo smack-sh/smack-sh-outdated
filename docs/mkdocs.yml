@@ -32,14 +32,14 @@ theme:
   # logo: assets/logo.png
   # favicon: assets/logo.png
 repo_name: smack.sh
-repo_url: https://github.com/stackblitz-labs/smack.sh
+repo_url: https://github.com/smack-sh/smack-sh
 edit_uri: ''
 
 extra:
   generator: false
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/stackblitz-labs/smack.sh
+      link: https://github.com/smack-sh/smack-sh
       name: smack.sh
     - icon: fontawesome/brands/discourse
       link: https://thinktank.ottomator.ai/

@@ -1,5 +1,5 @@
-import { LLMManager } from '~/lib/modules/llm/manager';
 import type { Template } from '~/types/template';
+import type { ProviderInfo } from '~/types/model';
 
 export const WORK_DIR_NAME = 'project';
 export const WORK_DIR = `/home/${WORK_DIR_NAME}`;
@@ -16,10 +16,28 @@ export const TOOL_NO_EXECUTE_FUNCTION = 'Error: No execute function found on too
 export const TOOL_EXECUTION_DENIED = 'Error: User denied access to tool execution';
 export const TOOL_EXECUTION_ERROR = 'Error: An error occured while calling tool';
 
-const llmManager = LLMManager.getInstance(import.meta.env);
+/*
+ * Provider list will be loaded from API in client builds
+ * Static fallback for build-time safety - matches what LLMManager would provide
+ */
+const FALLBACK_PROVIDER_LIST: ProviderInfo[] = [
+  {
+    name: 'Google',
+    staticModels: [],
+    config: { baseUrlKey: 'GEMINI_LIKE_API_BASE_URL', apiTokenKey: 'GEMINI_LIKE_API_KEY' },
+    getApiKeyLink: 'https://aistudio.google.com/app/apikey',
+    getModelInstance: () => {
+      throw new Error('Not implemented in client');
+    },
+  } as ProviderInfo,
+];
 
-export const PROVIDER_LIST = llmManager.getAllProviders();
-export const DEFAULT_PROVIDER = llmManager.getDefaultProvider();
+/*
+ * For Electron/client builds, use static fallback
+ * Providers will be loaded dynamically from API routes
+ */
+export const PROVIDER_LIST: ProviderInfo[] = FALLBACK_PROVIDER_LIST;
+export const DEFAULT_PROVIDER: ProviderInfo = FALLBACK_PROVIDER_LIST[0];
 
 export const providerBaseUrlEnvKeys: Record<string, { baseUrlKey?: string; apiTokenKey?: string }> = {};
 PROVIDER_LIST.forEach((provider) => {

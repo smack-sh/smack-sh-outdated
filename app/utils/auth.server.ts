@@ -7,11 +7,11 @@ import type { LoaderFunctionArgs } from '@remix-run/node';
  */
 export async function requireAuth(args: LoaderFunctionArgs) {
   const { userId } = await getAuth(args);
-  
+
   if (!userId) {
     throw redirect('/sign-in');
   }
-  
+
   return userId;
 }
 
@@ -20,17 +20,17 @@ export async function requireAuth(args: LoaderFunctionArgs) {
  */
 export async function requireAdmin(args: LoaderFunctionArgs) {
   const { userId } = await getAuth(args);
-  
+
   if (!userId) {
     throw redirect('/sign-in');
   }
-  
-  const adminUserIds = (process.env.ADMIN_USER_IDS || '').split(',').map(id => id.trim());
-  
+
+  const adminUserIds = (process.env.ADMIN_USER_IDS || '').split(',').map((id) => id.trim());
+
   if (!adminUserIds.includes(userId)) {
     throw redirect('/unauthorized');
   }
-  
+
   return userId;
 }
 
@@ -39,12 +39,13 @@ export async function requireAdmin(args: LoaderFunctionArgs) {
  */
 export async function isAdmin(args: LoaderFunctionArgs): Promise<boolean> {
   const { userId } = await getAuth(args);
-  
+
   if (!userId) {
     return false;
   }
-  
-  const adminUserIds = (process.env.ADMIN_USER_IDS || '').split(',').map(id => id.trim());
+
+  const adminUserIds = (process.env.ADMIN_USER_IDS || '').split(',').map((id) => id.trim());
+
   return adminUserIds.includes(userId);
 }
 

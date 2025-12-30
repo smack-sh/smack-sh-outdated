@@ -1,20 +1,8 @@
 import { db } from '~/services/firebase.server';
 import { Timestamp, FieldValue } from 'firebase-admin/firestore';
+import type { TerminalSession, TerminalStatus } from '~/types/terminal';
 
 type DocumentData = import('firebase-admin/firestore').DocumentData;
-
-export type TerminalStatus = 'active' | 'inactive' | 'terminated';
-
-export interface TerminalSession {
-  id: string;
-  userId: string;
-  name: string;
-  status: TerminalStatus;
-  environment: string;
-  lastActivity: string;
-  createdAt: string;
-  updatedAt: string;
-}
 
 interface FirebaseTerminalSession extends Omit<TerminalSession, 'lastActivity' | 'createdAt' | 'updatedAt'> {
   lastActivity: Timestamp;
@@ -43,7 +31,7 @@ export async function getTerminalSessions(userId: string): Promise<TerminalSessi
       .orderBy('updatedAt', 'desc')
       .get();
 
-    return snapshot.docs.map(doc => fromFirebaseDoc(doc));
+    return snapshot.docs.map((doc) => fromFirebaseDoc(doc));
   } catch (error) {
     console.error('Error fetching terminal sessions:', error);
     throw new Error('Failed to fetch terminal sessions');
@@ -53,11 +41,11 @@ export async function getTerminalSessions(userId: string): Promise<TerminalSessi
 export async function createTerminalSession(
   userId: string,
   name: string,
-  environment: string
+  environment: string,
 ): Promise<TerminalSession> {
   try {
     const now = new Date().toISOString();
-    
+
     // In a real app, you would save this to your database
     const newSession: Omit<TerminalSession, 'id'> = {
       userId,
@@ -71,6 +59,7 @@ export async function createTerminalSession(
 
     const docRef = await db.collection(terminalSessionsCollection).add(newSession);
     const doc = await docRef.get();
+
     return fromFirebaseDoc(doc);
   } catch (error) {
     console.error('Error creating terminal session:', error);
@@ -80,25 +69,26 @@ export async function createTerminalSession(
 
 export async function updateTerminalSession(
   sessionId: string,
-  updates: Partial<Omit<TerminalSession, 'id' | 'userId' | 'createdAt'>>
+  updates: Partial<Omit<TerminalSession, 'id' | 'userId' | 'createdAt'>>,
 ): Promise<TerminalSession | null> {
   try {
-    // In a real app, you would update this in your database
-    // This is a mock implementation
-    const session = {
+    /*
+     * In a real app, you would update this in your database
+     * This is a mock implementation
+     */
+    const session: TerminalSession = {
       id: sessionId,
       userId: 'current-user-id',
       name: 'Mock Session',
-      status: 'active',
+      status: 'active' as TerminalStatus,
       environment: 'Mock Environment',
-      lastActivity: new Date(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      lastActivity: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       ...updates,
     };
-    
+
     return session;
-    
   } catch (error) {
     console.error('Error updating terminal session:', error);
     throw new Error('Failed to update terminal session');

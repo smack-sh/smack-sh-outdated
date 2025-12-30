@@ -53,28 +53,31 @@ export const Messages = forwardRef<HTMLDivElement, MessagesProps>(
       <div id={id} className={props.className} ref={ref}>
         {messages.length > 0
           ? messages.map((message, index) => {
+              if (!message || !message.id) {
+                return null;
+              }
               const { role, content, id: messageId, annotations, parts } = message;
               const isUserMessage = role === 'user';
               const isFirst = index === 0;
               const isHidden = annotations?.includes('hidden');
 
               if (isHidden) {
-                return <Fragment key={index} />;
+                return <Fragment key={message.id} />;
               }
 
               return (
                 <div
-                  key={index}
+                  key={message.id}
                   className={classNames('flex gap-4 py-3 w-full rounded-lg', {
                     'mt-4': !isFirst,
                   })}
                 >
                   <div className="grid grid-col-1 w-full">
                     {isUserMessage ? (
-                      <UserMessage content={content} parts={parts} />
+                      <UserMessage content={content ?? ''} parts={parts} />
                     ) : (
                       <AssistantMessage
-                        content={content}
+                        content={content ?? ''}
                         annotations={message.annotations}
                         messageId={messageId}
                         onRewind={handleRewind}

@@ -12,7 +12,6 @@ import { createWindow } from './ui/window';
 import { initCookies, storeCookies } from './utils/cookie';
 import { loadServerBuild, serveAsset } from './utils/serve';
 import { reloadOnChange } from './utils/reload';
-import { setupErrorHandlers, reportError } from './utils/error-handler';
 
 Object.assign(console, log.functions);
 
@@ -21,49 +20,41 @@ console.log('main: isDev:', isDev);
 console.log('NODE_ENV:', global.process.env.NODE_ENV);
 console.log('isPackaged:', app.isPackaged);
 
-// Setup error handlers (must be done early)
-setupErrorHandlers();
+// Log unhandled errors
+process.on('uncaughtException', async (error) => {
+  console.log('Uncaught Exception:', error);
+});
 
-// Validate and configure APP_PATH_ROOT with fallbacks
+process.on('unhandledRejection', async (error) => {
+  console.log('Unhandled Rejection:', error);
+});
+
 (() => {
   const root = global.process.env.APP_PATH_ROOT ?? import.meta.env.VITE_APP_PATH_ROOT;
 
   if (root === undefined) {
-    console.log('No APP_PATH_ROOT or VITE_APP_PATH_ROOT provided. Using default paths.');
+    console.log('no given APP_PATH_ROOT or VITE_APP_PATH_ROOT. default path is used.');
     return;
   }
 
   if (!path.isAbsolute(root)) {
-    const errorMessage = `APP_PATH_ROOT must be an absolute path, but got: ${root}. Using default paths instead.`;
-    console.warn(errorMessage);
-    reportError(new Error(errorMessage), false);
-    return; // Use default paths instead of crashing
+    console.log('APP_PATH_ROOT must be absolute path.');
+    global.process.exit(1);
   }
 
-  try {
+  console.log(`APP_PATH_ROOT: ${root}`);
 
-    console.log(`APP_PATH_ROOT: ${root}`);
+  const subdirName = pkg.name;
 
-    const subdirName = pkg.name;
-
-    for (const [key, val] of [
-      ['appData', ''],
-      ['userData', subdirName],
-      ['sessionData', subdirName],
-    ] as const) {
-      const targetPath = path.join(root, val);
-      app.setPath(key, targetPath);
-      console.log(`Set ${key} path to: ${targetPath}`);
-    }
-
-    app.setAppLogsPath(path.join(root, subdirName, 'Logs'));
-    console.log(`Set logs path to: ${path.join(root, subdirName, 'Logs')}`);
-  } catch (pathError) {
-    const errorMessage = `Failed to set app paths: ${pathError instanceof Error ? pathError.message : String(pathError)}. Using default paths.`;
-    console.warn(errorMessage);
-    reportError(pathError, false);
-    // Continue with default paths
+  for (const [key, val] of [
+    ['appData', ''],
+    ['userData', subdirName],
+    ['sessionData', subdirName],
+  ] as const) {
+    app.setPath(key, path.join(root, val));
   }
+
+  app.setAppLogsPath(path.join(root, subdirName, 'Logs'));
 })();
 
 console.log('appPath:', app.getAppPath());
@@ -160,44 +151,25 @@ declare global {
     }
   });
 
-  let rendererURL: string;
+  const rendererURL = await (isDev
+    ? (async () => {
+        await initViteServer();
 
-  try {
-    rendererURL = await (isDev
-      ? (async () => {
-          try {
-            await initViteServer();
+        if (!viteServer) {
+          throw new Error('Vite server is not initialized');
+        }
 
-            if (!viteServer) {
-              throw new Error('Vite server is not initialized');
-            }
+        const listen = await viteServer.listen();
+        global.__electron__ = electron;
+        viteServer.printUrls();
 
-            const listen = await viteServer.listen();
-            global.__electron__ = electron;
-            viteServer.printUrls();
+        return `http://localhost:${listen.config.server.port}`;
+      })()
+    : `http://localhost:${DEFAULT_PORT}`);
 
-            return `http://localhost:${listen.config.server.port}`;
-          } catch (viteError) {
-            reportError(viteError, false);
-            throw new Error(`Failed to initialize Vite server: ${viteError instanceof Error ? viteError.message : String(viteError)}`);
-          }
-        })()
-      : `http://localhost:${DEFAULT_PORT}`);
+  console.log('Using renderer URL:', rendererURL);
 
-    console.log('Using renderer URL:', rendererURL);
-  } catch (urlError) {
-    reportError(urlError, true);
-    throw urlError;
-  }
-
-  let win: BrowserWindow;
-
-  try {
-    win = await createWindow(rendererURL);
-  } catch (windowError) {
-    reportError(windowError, true);
-    throw windowError;
-  }
+  const win = await createWindow(rendererURL);
 
   app.on('activate', async () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -210,40 +182,14 @@ declare global {
   return win;
 })()
   .then((win) => {
-    // IPC samples : send and receive.
+    // IPC samples : send and recieve.
     let count = 0;
-    setInterval(() => {
-      try {
-        if (win && !win.isDestroyed() && win.webContents && !win.webContents.isDestroyed()) {
-          win.webContents.send('ping', `hello from main! ${count++}`);
-        }
-      } catch (sendError) {
-        log.error('Failed to send ping to renderer:', sendError);
-      }
-    }, 60 * 1000);
-
-    ipcMain.handle('ipcTest', (event, ...args) => {
-      try {
-        console.log('ipc: renderer -> main', { event, ...args });
-      } catch (ipcError) {
-        log.error('IPC handler error:', ipcError);
-      }
-    });
+    setInterval(() => win.webContents.send('ping', `hello from main! ${count++}`), 60 * 1000);
+    ipcMain.handle('ipcTest', (event, ...args) => console.log('ipc: renderer -> main', { event, ...args }));
 
     return win;
   })
-  .then((win) => {
-    try {
-      return setupMenu(win);
-    } catch (menuError) {
-      reportError(menuError, false);
-      return win;
-    }
-  })
-  .catch((error) => {
-    reportError(error, true);
-    // Don't throw here - error handler will deal with it
-  });
+  .then((win) => setupMenu(win));
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

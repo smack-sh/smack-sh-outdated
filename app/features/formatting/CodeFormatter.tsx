@@ -59,10 +59,11 @@ console.log(exampleFunction(5, 10));`);
 
     try {
       // Simulate formatting - in real app, call actual formatter API
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Mock formatted output
       let formatted = '';
+
       switch (selectedFormatter.id) {
         case 'prettier':
           formatted = `function exampleFunction(param1, param2) {
@@ -121,6 +122,7 @@ fn main() {
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
+
       // Show success toast
     } catch (error) {
       console.error('Failed to copy:', error);
@@ -132,9 +134,7 @@ fn main() {
       {/* Header */}
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Code Formatter</h2>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Format your code with industry-standard formatters
-        </p>
+        <p className="mt-2 text-gray-600 dark:text-gray-400">Format your code with industry-standard formatters</p>
       </div>
 
       {/* Formatter Selection */}
@@ -175,9 +175,7 @@ fn main() {
         {/* Input */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Input Code
-            </label>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Input Code</label>
             <button
               onClick={() => setInputCode('')}
               className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
@@ -196,9 +194,7 @@ fn main() {
         {/* Output */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Formatted Code
-            </label>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Formatted Code</label>
             <div className="flex gap-2">
               <button
                 onClick={formatCode}
@@ -252,9 +248,7 @@ fn main() {
 
       {/* Supported Languages */}
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-          Supported Languages
-        </h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Supported Languages</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {selectedFormatter.languages.map((lang) => (
             <div key={lang} className="flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded">

@@ -1,4 +1,4 @@
-{
+ {
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "types": [
@@ -22,7 +22,8 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./app/*"]
+      "~/*": ["./app/*"],
+      "@smack-os/*": ["./smack-os/*"]
     },
     "noEmit": true
   },

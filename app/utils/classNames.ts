@@ -44,8 +44,10 @@ function parseValue(arg: ClassNamesArg): string {
   let classes = '';
 
   for (const key in arg) {
-    // Fix: Add hasOwnProperty check to ensure we only process own properties
-    // and avoid iterating over inherited properties.
+    /*
+     * Fix: Add hasOwnProperty check to ensure we only process own properties
+     * and avoid iterating over inherited properties.
+     */
     if (Object.prototype.hasOwnProperty.call(arg, key) && arg[key]) {
       classes = appendClass(classes, key);
     }
@@ -54,11 +56,14 @@ function parseValue(arg: ClassNamesArg): string {
   return classes;
 }
 
-// Fix: Change the type of newClass to 'string'.
-// The parseValue function always returns a string (empty or otherwise),
-// so newClass will never actually be `undefined` here.
+/*
+ * Fix: Change the type of newClass to 'string'.
+ * The parseValue function always returns a string (empty or otherwise),
+ * so newClass will never actually be `undefined` here.
+ */
 function appendClass(value: string, newClass: string) {
-  if (!newClass) { // This correctly handles newClass being an empty string
+  if (!newClass) {
+    // This correctly handles newClass being an empty string
     return value;
   }
 

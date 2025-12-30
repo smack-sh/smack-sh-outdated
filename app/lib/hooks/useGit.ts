@@ -139,61 +139,40 @@ export function useGit() {
       } catch (error) {
         console.error('Git clone error:', error);
 
-        // Handle specific error types based on error structure, not string matching
+        // Handle specific error types
         const errorMessage = error instanceof Error ? error.message : String(error);
-        let userMessage = 'Failed to clone repository';
-        let shouldRetry = false;
 
-        // Check error properties first (more reliable than string matching)
-        if (error && typeof error === 'object') {
-          const errorObj = error as Record<string, unknown>;
-          
-          // Check for HTTP status codes
-          if (typeof errorObj.status === 'number') {
-            const status = errorObj.status;
-            if (status === 401) {
-              userMessage = 'Authentication failed. Please check your GitHub credentials and try again.';
-            } else if (status === 403) {
-              userMessage = 'Access denied. Please check your repository permissions.';
-            } else if (status === 404) {
-              userMessage = 'Repository not found. Please check the URL and make sure the repository exists.';
-            } else if (status >= 500) {
-              userMessage = 'Server error. Please try again later.';
-              shouldRetry = true;
-            }
+        // Check for common error patterns
+        if (errorMessage.includes('Authentication failed')) {
+          toast.error(`Authentication failed. Please check your GitHub credentials and try again.`);
+          throw error;
+        } else if (
+          errorMessage.includes('ENOTFOUND') ||
+          errorMessage.includes('ETIMEDOUT') ||
+          errorMessage.includes('ECONNREFUSED')
+        ) {
+          toast.error(`Network error while connecting to repository. Please check your internet connection.`);
+
+          // Retry for network errors, up to 3 times
+          if (retryCount < 3) {
+            return gitClone(url, retryCount + 1);
           }
-          
-          // Check for network error codes
-          if (errorObj.code === 'ENOTFOUND' || errorObj.code === 'ETIMEDOUT' || errorObj.code === 'ECONNREFUSED') {
-            userMessage = 'Network error while connecting to repository. Please check your internet connection.';
-            shouldRetry = true;
-          }
+
+          throw new Error(
+            `Failed to connect to repository after multiple attempts. Please check your internet connection.`,
+          );
+        } else if (errorMessage.includes('404')) {
+          toast.error(`Repository not found. Please check the URL and make sure the repository exists.`);
+          throw new Error(`Repository not found. Please check the URL and make sure the repository exists.`);
+        } else if (errorMessage.includes('401')) {
+          toast.error(`Unauthorized access to repository. Please connect your GitHub account with proper permissions.`);
+          throw new Error(
+            `Unauthorized access to repository. Please connect your GitHub account with proper permissions.`,
+          );
         } else {
-          // Fallback to string matching only if structured properties are not available
-          // This is less reliable but necessary for some error types
-          const lowerMessage = errorMessage.toLowerCase();
-          
-          if (lowerMessage.includes('authentication failed') || lowerMessage.includes('unauthorized')) {
-            userMessage = 'Authentication failed. Please check your GitHub credentials and try again.';
-          } else if (
-            lowerMessage.includes('enotfound') ||
-            lowerMessage.includes('etimedout') ||
-            lowerMessage.includes('econnrefused') ||
-            lowerMessage.includes('network')
-          ) {
-            userMessage = 'Network error while connecting to repository. Please check your internet connection.';
-            shouldRetry = true;
-          }
+          toast.error(`Failed to clone repository: ${errorMessage}`);
+          throw error;
         }
-
-        toast.error(userMessage);
-
-        // Retry for network/server errors, up to 3 times
-        if (shouldRetry && retryCount < 3) {
-          return gitClone(url, retryCount + 1);
-        }
-
-        throw new Error(userMessage);
       }
     },
     [webcontainer, fs, ready],

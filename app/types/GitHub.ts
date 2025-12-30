@@ -106,6 +106,7 @@ export interface GitHubEvent {
     ref?: string;
     ref_type?: 'branch' | 'tag' | 'repository' | 'blob' | 'commit'; // More specific ref_type for common events.
     description?: string;
+
     // Payload content varies greatly by event type. Adding a generic index signature or `any` might be necessary depending on usage.
     [key: string]: any;
   };
@@ -125,8 +126,10 @@ export interface GitHubStats {
   totalGists: number;
   publicRepos: number;
   privateRepos: number; // This might be zero if not accessible/private repos are not considered.
-  // stars: number; // User's total stars from all their repos - Removed as redundant with totalStars
-  // forks: number; // User's total forks from all their repos - Removed as redundant with totalForks
+  /*
+   * stars: number; // User's total stars from all their repos - Removed as redundant with totalStars
+   * forks: number; // User's total forks from all their repos - Removed as redundant with totalForks
+   */
   followers: number; // User's followers count
   publicGists: number;
   privateGists: number; // This might be zero if not accessible/private gists are not considered.
@@ -156,9 +159,10 @@ export interface GitHubTokenInfo {
   avatar_url: string;
   name: string | null;
   created_at: string;
+
   // followers: number; // Removed as it's a dynamic user stat, not token info.
   token_id?: string; // Potentially add `token_id` if needed from API response (e.g., for fine-grained tokens).
-  application?: { name: string; url: string; }; // Potentially add `application` fields if needed from API response (for OAuth apps).
+  application?: { name: string; url: string }; // Potentially add `application` fields if needed from API response (for OAuth apps).
 }
 
 export interface GitHubRateLimits {

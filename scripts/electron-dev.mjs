@@ -86,7 +86,6 @@ async function waitForServer(port, serverName) {
  */
 async function buildElectronDeps() {
   return new Promise((resolve, reject) => {
-    console.log('📦 Building Electron dependencies...');
     const buildProcess = spawn('pnpm', ['electron:build:deps'], {
       stdio: 'inherit',
       env: { ...process.env },
@@ -97,28 +96,12 @@ async function buildElectronDeps() {
         console.log('✅ Electron dependencies built successfully');
         resolve();
       } else {
-        console.error('');
-        console.error('❌ Build failed with exit code:', code);
-        console.error('');
-        console.error('💡 Troubleshooting:');
-        console.error('   1. Check if all dependencies are installed: pnpm install');
-        console.error('   2. Verify build scripts in package.json');
-        console.error('   3. Check for TypeScript or build errors above');
-        console.error('');
-        reject(new Error(`Build failed with exit code: ${code}. See error messages above for details.`));
+        reject(new Error(`Build failed with exit code: ${code}`));
       }
     });
 
     buildProcess.on('error', (error) => {
-      console.error('');
-      console.error('❌ Build process error:', error.message);
-      console.error('');
-      console.error('💡 Troubleshooting:');
-      console.error('   1. Make sure pnpm is installed: npm install -g pnpm');
-      console.error('   2. Check if the "electron:build:deps" script exists in package.json');
-      console.error('   3. Verify you have write permissions in the project directory');
-      console.error('');
-      reject(new Error(`Build process error: ${error.message}. See troubleshooting tips above.`));
+      reject(new Error(`Build process error: ${error.message}`));
     });
   });
 }
@@ -160,17 +143,7 @@ async function startElectronDev() {
 
     // Check if main process file exists
     if (!fs.existsSync(mainPath)) {
-      console.error(`❌ Main process file not found: ${mainPath}`);
-      console.error('');
-      console.error('💡 Recovery steps:');
-      console.error('   1. Run "pnpm electron:build:deps" to build Electron dependencies');
-      console.error('   2. Make sure the build completed successfully');
-      console.error('   3. Check that the file exists at the expected path');
-      console.error('');
-      console.error('📝 Expected build output location:');
-      console.error(`   ${mainPath}`);
-      console.error('');
-      throw new Error(`Main process file not found: ${mainPath}. Please run "pnpm electron:build:deps" first.`);
+      throw new Error(`Main process file not found: ${mainPath}`);
     }
 
     electronProcess = spawn(electronPath, [mainPath], {

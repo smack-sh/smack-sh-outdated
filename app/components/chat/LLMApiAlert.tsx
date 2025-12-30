@@ -3,12 +3,13 @@ import type { LlmErrorAlertType } from '~/types/actions';
 import { classNames } from '~/utils/classNames';
 
 interface Props {
-  alert: LlmErrorAlertType;
+  alert: LlmErrorAlertType & { retryable?: boolean };
   clearAlert: () => void;
+  onRetry?: () => void;
 }
 
-export default function LlmErrorAlert({ alert, clearAlert }: Props) {
-  const { title, description, provider, errorType } = alert;
+export default function LlmErrorAlert({ alert, clearAlert, onRetry }: Props) {
+  const { title, description, provider, errorType, retryable } = alert;
 
   const getErrorIcon = () => {
     switch (errorType) {
@@ -87,6 +88,20 @@ export default function LlmErrorAlert({ alert, clearAlert }: Props) {
               transition={{ delay: 0.3 }}
             >
               <div className="flex gap-2">
+                {retryable && onRetry && (
+                  <button
+                    onClick={onRetry}
+                    className={classNames(
+                      'px-2 py-1.5 rounded-md text-sm font-medium',
+                      'bg-smack-elements-button-primary-background',
+                      'hover:bg-smack-elements-button-primary-backgroundHover',
+                      'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-smack-elements-button-primary-background',
+                      'text-smack-elements-button-primary-text',
+                    )}
+                  >
+                    Retry
+                  </button>
+                )}
                 <button
                   onClick={clearAlert}
                   className={classNames(

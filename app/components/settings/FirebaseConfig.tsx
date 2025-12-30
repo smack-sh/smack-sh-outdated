@@ -9,15 +9,13 @@ export function FirebaseConfig() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
       // Validate JSON
       const parsedConfig = JSON.parse(config);
-      
-      fetcher.submit(
-        { config: JSON.stringify(parsedConfig) },
-        { method: 'post', action: '/api/configure-firebase' }
-      );
-      
+
+      fetcher.submit({ config: JSON.stringify(parsedConfig) }, { method: 'post', action: '/api/configure-firebase' });
+
       setIsOpen(false);
     } catch (err) {
       setError('Invalid JSON configuration');
@@ -39,18 +37,12 @@ export function FirebaseConfig() {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-gray-900 p-6 rounded-lg shadow-xl w-full max-w-2xl">
         <h2 className="text-2xl font-bold text-red-500 mb-4">Firebase Configuration</h2>
-        
-        {error && (
-          <div className="mb-4 p-2 bg-red-900 text-red-100 rounded">
-            {error}
-          </div>
-        )}
+
+        {error && <div className="mb-4 p-2 bg-red-900 text-red-100 rounded">{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-300 mb-2">
-              Paste your Firebase config (from Firebase Console):
-            </label>
+            <label className="block text-gray-300 mb-2">Paste your Firebase config (from Firebase Console):</label>
             <textarea
               className="w-full h-64 p-2 bg-gray-800 text-white font-mono text-sm rounded"
               value={config}

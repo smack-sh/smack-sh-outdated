@@ -7,8 +7,10 @@ export interface GitLabUserResponse {
   web_url: string;
   created_at: string;
   bio: string;
+
   // GitLab APIs typically have public_projects_count for users, not public_repos
   public_projects_count: number;
+
   // GitLab does not have direct 'followers' or 'following' counts for users like GitHub
 }
 
@@ -51,6 +53,7 @@ export interface GitLabStats {
   privateProjects: number;
   stars: number;
   forks: number;
+
   // GitLab does not have direct 'followers' count for user statistics
   snippets: number;
   groups: GitLabGroupInfo[];

@@ -1,4 +1,4 @@
-appId: com.stackblitz.smack.sh
+appId: com.smack.sh
 productName: smack Local
 directories:
   buildResources: build
@@ -55,9 +55,9 @@ npmRebuild: false
 
 publish:
   provider: github
-  owner: Derek-X-Wang
-  repo: smack.local
-  private: true
+  owner: smack-sh
+  repo: smack
+  private: false
   releaseType: release
 
 electronDownload:

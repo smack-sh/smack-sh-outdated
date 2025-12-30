@@ -2,9 +2,23 @@ import { useState } from 'react';
 import { useLoaderData, Link } from '@remix-run/react';
 import { json, type LoaderFunctionArgs } from '@remix-run/node';
 
+interface Template {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  language: string;
+  features: string[];
+  difficulty: string;
+  stars: number;
+  downloads: number;
+  preview: string;
+  tags: string[];
+}
+
 export async function loader({ request }: LoaderFunctionArgs) {
   // Mock data - in real app, fetch from database or file system
-  const templates = [
+  const templates: Template[] = [
     {
       id: 'react-vite',
       name: 'React + Vite',
@@ -97,6 +111,19 @@ export async function loader({ request }: LoaderFunctionArgs) {
       tags: ['fastify', 'nodejs', 'api', 'postgresql'],
     },
     {
+      id: 'example-ai-chatbot',
+      name: 'AI Chatbot',
+      description: 'A chatbot with AI capabilities',
+      category: 'Fullstack',
+      language: 'TypeScript',
+      features: ['AI', 'Chatbot', 'TypeScript', 'Tailwind CSS', 'Prisma'],
+      difficulty: 'Advanced',
+      stars: 4.9,
+      downloads: 1200,
+      preview: 'https://via.placeholder.com/300x200?text=AI+Chatbot',
+      tags: ['ai', 'chatbot', 'fullstack', 'typescript', 'gemini'],
+    },
+    {
       id: 'electron-app',
       name: 'Electron Desktop App',
       description: 'Cross-platform desktop application',
@@ -119,13 +146,15 @@ export function ProjectTemplates() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const categories = ['all', ...Array.from(new Set(templates.map(t => t.category)))];
+  const categories = ['all', ...Array.from(new Set(templates.map((t) => t.category)))];
 
-  const filteredTemplates = templates.filter(template => {
+  const filteredTemplates = templates.filter((template) => {
     const matchesCategory = selectedCategory === 'all' || template.category === selectedCategory;
-    const matchesSearch = template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         template.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         template.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesSearch =
+      template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      template.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      template.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+
     return matchesCategory && matchesSearch;
   });
 
@@ -134,9 +163,7 @@ export function ProjectTemplates() {
       {/* Header */}
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Project Templates</h2>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Start your project with pre-built templates
-        </p>
+        <p className="mt-2 text-gray-600 dark:text-gray-400">Start your project with pre-built templates</p>
       </div>
 
       {/* Search and Filter */}
@@ -181,7 +208,7 @@ export function ProjectTemplates() {
   );
 }
 
-function TemplateCard({ template }: { template: any }) {
+function TemplateCard({ template }: { template: Template }) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -191,14 +218,12 @@ function TemplateCard({ template }: { template: any }) {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="relative">
-        <img
-          src={template.preview}
-          alt={template.name}
-          className="w-full h-48 object-cover"
-        />
-        <div className={`absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center transition-opacity ${
-          isHovered ? 'opacity-100' : 'opacity-0'
-        }`}>
+        <img src={template.preview} alt={template.name} className="w-full h-48 object-cover" />
+        <div
+          className={`absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center transition-opacity ${
+            isHovered ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
           <Link
             to={`/templates/${template.id}`}
             className="px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors"
@@ -217,18 +242,18 @@ function TemplateCard({ template }: { template: any }) {
           </div>
         </div>
 
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
-          {template.description}
-        </p>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">{template.description}</p>
 
         <div className="flex items-center justify-between text-sm mb-3">
-          <span className={`px-2 py-1 rounded-full ${
-            template.difficulty === 'Beginner'
-              ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-              : template.difficulty === 'Intermediate'
-              ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-              : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-          }`}>
+          <span
+            className={`px-2 py-1 rounded-full ${
+              template.difficulty === 'Beginner'
+                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                : template.difficulty === 'Intermediate'
+                  ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+                  : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+            }`}
+          >
             {template.difficulty}
           </span>
           <span className="text-gray-600 dark:text-gray-400">{template.language}</span>

@@ -4,11 +4,18 @@ import { IGNORE_PATTERNS, type FileMap } from './constants';
 import ignore from 'ignore';
 import type { ContextAnnotation } from '~/types/context';
 
-export function extractPropertiesFromMessage(message: Omit<Message, 'id'>): {
+export function extractPropertiesFromMessage(message: Omit<Message, 'id'> | null | undefined): {
   model: string;
   provider: string;
   content: string;
 } {
+  if (!message) {
+    return {
+      model: DEFAULT_MODEL,
+      provider: DEFAULT_PROVIDER.name,
+      content: '',
+    };
+  }
   const textContent = Array.isArray(message.content)
     ? message.content.find((item) => item.type === 'text')?.text || ''
     : message.content;

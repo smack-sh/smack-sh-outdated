@@ -2,28 +2,28 @@
 # These users/teams will automatically be requested for review when files are modified
 
 # Global ownership - repository maintainers
-* @stackblitz-labs/smack-maintainers
+* @smack-sh/smack-maintainers
 
 # GitHub workflows and CI/CD configuration - require maintainer review
-/.github/ @stackblitz-labs/smack-maintainers
-/package.json @stackblitz-labs/smack-maintainers
-/pnpm-lock.yaml @stackblitz-labs/smack-maintainers
+/.github/ @smack-sh/smack-maintainers
+/package.json @smack-sh/smack-maintainers
+/pnpm-lock.yaml @smack-sh/smack-maintainers
 
 # Security-sensitive configurations - require maintainer review
-/.env* @stackblitz-labs/smack-maintainers
-/wrangler.toml @stackblitz-labs/smack-maintainers  
-/Dockerfile @stackblitz-labs/smack-maintainers
-/docker-compose.yaml @stackblitz-labs/smack-maintainers
+/.env* @smack-sh/smack-maintainers
+/wrangler.toml @smack-sh/smack-maintainers  
+/Dockerfile @smack-sh/smack-maintainers
+/docker-compose.yaml @smack-sh/smack-maintainers
 
 # Core application architecture - require maintainer review
-/app/lib/.server/ @stackblitz-labs/smack-maintainers
-/app/routes/api.* @stackblitz-labs/smack-maintainers
+/app/lib/.server/ @smack-sh/smack-maintainers
+/app/routes/api.* @smack-sh/smack-maintainers
 
 # Build and deployment configuration - require maintainer review
-/vite*.config.ts @stackblitz-labs/smack-maintainers
-/tsconfig.json @stackblitz-labs/smack-maintainers
-/uno.config.ts @stackblitz-labs/smack-maintainers
-/eslint.config.mjs @stackblitz-labs/smack-maintainers
+/vite*.config.ts @smack-sh/smack-maintainers
+/tsconfig.json @smack-sh/smack-maintainers
+/uno.config.ts @smack-sh/smack-maintainers
+/eslint.config.mjs @smack-sh/smack-maintainers
 
 # Documentation (optional review)
 /*.md

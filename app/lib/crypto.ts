@@ -29,6 +29,7 @@ export async function decrypt(key: string, payload: string) {
 
   // Extract IV from the beginning of the bundle
   const iv = new Uint8Array(bundle.buffer, bundle.byteOffset, IV_LENGTH);
+
   // Extract ciphertext following the IV
   const ciphertext = new Uint8Array(bundle.buffer, bundle.byteOffset + IV_LENGTH, bundle.byteLength - IV_LENGTH);
 
@@ -48,7 +49,10 @@ export async function decrypt(key: string, payload: string) {
 
 async function getKey(key: string) {
   // Assuming 'key' is a base64 encoded string of the raw AES key material
-  return await crypto.subtle.importKey('raw', base64ToUint8Array(key), { name: 'AES-CBC' }, false, ['encrypt', 'decrypt']);
+  return await crypto.subtle.importKey('raw', base64ToUint8Array(key), { name: 'AES-CBC' }, false, [
+    'encrypt',
+    'decrypt',
+  ]);
 }
 
 // Renamed from decodeBase64 to accurately reflect its function: Uint8Array to Base64 string

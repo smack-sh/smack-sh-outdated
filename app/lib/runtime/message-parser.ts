@@ -1,4 +1,11 @@
-import type { ActionType, smackAction, smackActionData, FileAction, ShellAction, SupabaseAction } from '~/types/actions';
+import type {
+  ActionType,
+  smackAction,
+  smackActionData,
+  FileAction,
+  ShellAction,
+  SupabaseAction,
+} from '~/types/actions';
 import type { smackArtifactData } from '~/types/artifact';
 import { createScopedLogger } from '~/utils/logger';
 import { unreachable } from '~/utils/unreachable';
@@ -76,6 +83,7 @@ function cleanEscapedTags(content: string) {
 export class StreamingMessageParser {
   #messages = new Map<string, MessageState>();
   #artifactCounter = 0;
+  private readonly MAX_CONTENT_LENGTH = 1024 * 1024; // 1MB limit for action content
 
   constructor(private _options: StreamingMessageParserOptions = {}) {}
 
@@ -90,47 +98,19 @@ export class StreamingMessageParser {
         artifactCounter: 0,
         currentAction: { content: '' },
         actionId: 0,
+        buffer: '',
       };
-
       this.#messages.set(messageId, state);
     }
 
+    const chunk = state.buffer + input.slice(state.position);
+    state.buffer = '';
+
     let output = '';
-    let i = state.position;
-    let earlyBreak = false;
+    let i = 0;
 
-    while (i < input.length) {
-      if (input.startsWith(smack_QUICK_ACTIONS_OPEN, i)) {
-        const actionsBlockEnd = input.indexOf(smack_QUICK_ACTIONS_CLOSE, i);
-
-        if (actionsBlockEnd !== -1) {
-          const actionsBlockContent = input.slice(i + smack_QUICK_ACTIONS_OPEN.length, actionsBlockEnd);
-
-          // Find all <smack-quick-action ...>label</smack-quick-action> inside
-          const quickActionRegex = /<smack-quick-action([^>]*)>([\s\S]*?)<\/smack-quick-action>/g;
-          let match;
-          const buttons = [];
-
-          while ((match = quickActionRegex.exec(actionsBlockContent)) !== null) {
-            const tagAttrs = match[1];
-            const label = match[2];
-            const type = this.#extractAttribute(tagAttrs, 'type');
-            const message = this.#extractAttribute(tagAttrs, 'message');
-            const path = this.#extractAttribute(tagAttrs, 'path');
-            const href = this.#extractAttribute(tagAttrs, 'href');
-            buttons.push(
-              createQuickActionElement(
-                { type: type || '', message: message || '', path: path || '', href: href || '' },
-                label,
-              ),
-            );
-          }
-          output += createQuickActionGroup(buttons);
-          i = actionsBlockEnd + smack_QUICK_ACTIONS_CLOSE.length;
-          continue;
-        }
-      }
-
+    while (i < chunk.length) {
+      const remainingInput = chunk.slice(i);
       if (state.insideArtifact) {
         const currentArtifact = state.currentArtifact;
 
@@ -139,23 +119,33 @@ export class StreamingMessageParser {
         }
 
         if (state.insideAction) {
-          const closeIndex = input.indexOf(ARTIFACT_ACTION_TAG_CLOSE, i);
-
+          const closeIndex = remainingInput.indexOf(ARTIFACT_ACTION_TAG_CLOSE);
           const currentAction = state.currentAction;
 
           if (closeIndex !== -1) {
-            currentAction.content += input.slice(i, closeIndex);
+            const contentChunk = remainingInput.slice(0, closeIndex);
+            currentAction.content += contentChunk;
+
+            if (currentAction.content.length > this.MAX_CONTENT_LENGTH) {
+              logger.warn('Action content exceeds max length, truncating.');
+              currentAction.content = currentAction.content.slice(0, this.MAX_CONTENT_LENGTH);
+            }
 
             let content = currentAction.content.trim();
 
-            if ('type' in currentAction && currentAction.type === 'file') {
-              // Remove markdown code block syntax if present and file is not markdown
-              if (!currentAction.filePath.endsWith('.md')) {
-                content = cleanoutMarkdownSyntax(content);
-                content = cleanEscapedTags(content);
+            try {
+              if ('type' in currentAction && currentAction.type === 'file') {
+                if (!currentAction.filePath.endsWith('.md')) {
+                  content = cleanoutMarkdownSyntax(content);
+                  content = cleanEscapedTags(content);
+                }
+                content += '\n';
+              } else {
+                // Try to parse as JSON for other action types
+                JSON.parse(content);
               }
-
-              content += '\n';
+            } catch (e) {
+              // Not JSON, which is fine for many action types.
             }
 
             currentAction.content = content;
@@ -163,65 +153,64 @@ export class StreamingMessageParser {
             this._options.callbacks?.onActionClose?.({
               artifactId: currentArtifact.id,
               messageId,
-
-              /**
-               * We decrement the id because it's been incremented already
-               * when `onActionOpen` was emitted to make sure the ids are
-               * the same.
-               */
               actionId: String(state.actionId - 1),
-
               action: currentAction as smackAction,
             });
 
             state.insideAction = false;
             state.currentAction = { content: '' };
-
-            i = closeIndex + ARTIFACT_ACTION_TAG_CLOSE.length;
+            i += closeIndex + ARTIFACT_ACTION_TAG_CLOSE.length;
           } else {
-            if ('type' in currentAction && currentAction.type === 'file') {
-              let content = input.slice(i);
-
-              if (!currentAction.filePath.endsWith('.md')) {
-                content = cleanoutMarkdownSyntax(content);
-                content = cleanEscapedTags(content);
-              }
-
+            currentAction.content += remainingInput;
+            if (currentAction.content.length > this.MAX_CONTENT_LENGTH) {
+              logger.warn('Action content stream exceeds max length, marking as partial.');
+              currentAction.partial = true;
+              currentAction.content = currentAction.content.slice(0, this.MAX_CONTENT_LENGTH);
+              // Don't buffer, just end the action
+              this._options.callbacks?.onActionClose?.({
+                artifactId: currentArtifact.id,
+                messageId,
+                actionId: String(state.actionId - 1),
+                action: currentAction as smackAction,
+              });
+              state.insideAction = false;
+              state.currentAction = { content: '' };
+            } else {
               this._options.callbacks?.onActionStream?.({
                 artifactId: currentArtifact.id,
                 messageId,
                 actionId: String(state.actionId - 1),
-                action: {
-                  ...(currentAction as FileAction),
-                  content,
-                  filePath: currentAction.filePath,
-                },
+                action: { ...currentAction, content: remainingInput } as smackAction,
               });
+              state.buffer = chunk.slice(i);
             }
-
             break;
           }
         } else {
-          const actionOpenIndex = input.indexOf(ARTIFACT_ACTION_TAG_OPEN, i);
-          const artifactCloseIndex = input.indexOf(ARTIFACT_TAG_CLOSE, i);
+          const actionOpenIndex = remainingInput.indexOf(ARTIFACT_ACTION_TAG_OPEN);
+          const artifactCloseIndex = remainingInput.indexOf(ARTIFACT_TAG_CLOSE);
 
           if (actionOpenIndex !== -1 && (artifactCloseIndex === -1 || actionOpenIndex < artifactCloseIndex)) {
-            const actionEndIndex = input.indexOf('>', actionOpenIndex);
+            const actionEndIndex = remainingInput.indexOf('>', actionOpenIndex);
 
             if (actionEndIndex !== -1) {
               state.insideAction = true;
-
-              state.currentAction = this.#parseActionTag(input, actionOpenIndex, actionEndIndex);
-
-              this._options.callbacks?.onActionOpen?.({
-                artifactId: currentArtifact.id,
-                messageId,
-                actionId: String(state.actionId++),
-                action: state.currentAction as smackAction,
-              });
-
-              i = actionEndIndex + 1;
+              try {
+                state.currentAction = this.#parseActionTag(remainingInput, actionOpenIndex, actionEndIndex);
+                this._options.callbacks?.onActionOpen?.({
+                  artifactId: currentArtifact.id,
+                  messageId,
+                  actionId: String(state.actionId++),
+                  action: state.currentAction as smackAction,
+                });
+                i += actionEndIndex + 1;
+              } catch (error) {
+                logger.error('Failed to parse action tag:', error);
+                state.insideAction = false;
+                i += actionOpenIndex + ARTIFACT_ACTION_TAG_OPEN.length;
+              }
             } else {
+              state.buffer = chunk.slice(i);
               break;
             }
           } else if (artifactCloseIndex !== -1) {
@@ -230,104 +219,59 @@ export class StreamingMessageParser {
               artifactId: currentArtifact.id,
               ...currentArtifact,
             });
-
             state.insideArtifact = false;
             state.currentArtifact = undefined;
-
-            i = artifactCloseIndex + ARTIFACT_TAG_CLOSE.length;
+            i += artifactCloseIndex + ARTIFACT_TAG_CLOSE.length;
           } else {
+            state.buffer = chunk.slice(i);
             break;
           }
         }
-      } else if (input[i] === '<' && input[i + 1] !== '/') {
-        let j = i;
-        let potentialTag = '';
+      } else if (remainingInput.startsWith(ARTIFACT_TAG_OPEN)) {
+        const openTagEnd = remainingInput.indexOf('>');
+        if (openTagEnd !== -1) {
+          const artifactTag = remainingInput.slice(0, openTagEnd + 1);
+          const artifactTitle = this.#extractAttribute(artifactTag, 'title') as string;
+          const type = this.#extractAttribute(artifactTag, 'type') as string;
+          const artifactId = `${messageId}-${state.artifactCounter++}`;
 
-        while (j < input.length && potentialTag.length < ARTIFACT_TAG_OPEN.length) {
-          potentialTag += input[j];
-
-          if (potentialTag === ARTIFACT_TAG_OPEN) {
-            const nextChar = input[j + 1];
-
-            if (nextChar && nextChar !== '>' && nextChar !== ' ') {
-              output += input.slice(i, j + 1);
-              i = j + 1;
-              break;
-            }
-
-            const openTagEnd = input.indexOf('>', j);
-
-            if (openTagEnd !== -1) {
-              const artifactTag = input.slice(i, openTagEnd + 1);
-
-              const artifactTitle = this.#extractAttribute(artifactTag, 'title') as string;
-              const type = this.#extractAttribute(artifactTag, 'type') as string;
-
-              // const artifactId = this.#extractAttribute(artifactTag, 'id') as string;
-              const artifactId = `${messageId}-${state.artifactCounter++}`;
-
-              if (!artifactTitle) {
-                logger.warn('Artifact title missing');
-              }
-
-              if (!artifactId) {
-                logger.warn('Artifact id missing');
-              }
-
-              state.insideArtifact = true;
-
-              const currentArtifact = {
-                id: artifactId,
-                title: artifactTitle,
-                type,
-              } satisfies smackArtifactData;
-
-              state.currentArtifact = currentArtifact;
-
-              this._options.callbacks?.onArtifactOpen?.({
-                messageId,
-                artifactId: currentArtifact.id,
-                ...currentArtifact,
-              });
-
-              const artifactFactory = this._options.artifactElement ?? createArtifactElement;
-
-              output += artifactFactory({ messageId, artifactId });
-
-              i = openTagEnd + 1;
-            } else {
-              earlyBreak = true;
-            }
-
-            break;
-          } else if (!ARTIFACT_TAG_OPEN.startsWith(potentialTag)) {
-            output += input.slice(i, j + 1);
-            i = j + 1;
-            break;
+          if (!artifactTitle || !artifactId) {
+            logger.warn('Artifact title or id missing', { artifactTag });
+            output += remainingInput[0];
+            i++;
+            continue;
           }
 
-          j++;
-        }
+          state.insideArtifact = true;
+          const currentArtifact = { id: artifactId, title: artifactTitle, type } satisfies smackArtifactData;
+          state.currentArtifact = currentArtifact;
 
-        if (j === input.length && ARTIFACT_TAG_OPEN.startsWith(potentialTag)) {
+          this._options.callbacks?.onArtifactOpen?.({
+            messageId,
+            artifactId: currentArtifact.id,
+            ...currentArtifact,
+          });
+
+          const artifactFactory = this._options.artifactElement ?? createArtifactElement;
+          output += artifactFactory({ messageId, artifactId });
+          i += openTagEnd + 1;
+        } else {
+          state.buffer = chunk.slice(i);
           break;
         }
       } else {
-        /*
-         * Note: Auto-file-creation from code blocks is now handled by EnhancedMessageParser
-         * to avoid duplicate processing and provide better shell command detection
-         */
-        output += input[i];
-        i++;
-      }
-
-      if (earlyBreak) {
-        break;
+        const nextTagIndex = remainingInput.indexOf('<');
+        if (nextTagIndex === -1) {
+          output += remainingInput;
+          i += remainingInput.length;
+        } else {
+          output += remainingInput.slice(0, nextTagIndex);
+          i += nextTagIndex;
+        }
       }
     }
 
-    state.position = i;
-
+    state.position = input.length;
     return output;
   }
 
@@ -337,44 +281,39 @@ export class StreamingMessageParser {
 
   #parseActionTag(input: string, actionOpenIndex: number, actionEndIndex: number) {
     const actionTag = input.slice(actionOpenIndex, actionEndIndex + 1);
-
     const actionType = this.#extractAttribute(actionTag, 'type') as ActionType;
 
-    const actionAttributes = {
+    if (!actionType) {
+      throw new Error('Action type is missing');
+    }
+
+    const actionAttributes: Partial<smackAction> = {
       type: actionType,
       content: '',
     };
 
-    if (actionType === 'supabase') {
-      const operation = this.#extractAttribute(actionTag, 'operation');
-
-      if (!operation || !['migration', 'query'].includes(operation)) {
-        logger.warn(`Invalid or missing operation for Supabase action: ${operation}`);
-        throw new Error(`Invalid Supabase operation: ${operation}`);
-      }
-
-      (actionAttributes as SupabaseAction).operation = operation as 'migration' | 'query';
-
-      if (operation === 'migration') {
-        const filePath = this.#extractAttribute(actionTag, 'filePath');
-
-        if (!filePath) {
-          logger.warn('Migration requires a filePath');
-          throw new Error('Migration requires a filePath');
+    try {
+      if (actionType === 'supabase') {
+        const operation = this.#extractAttribute(actionTag, 'operation');
+        if (!operation || !['migration', 'query'].includes(operation)) {
+          throw new Error(`Invalid Supabase operation: ${operation}`);
         }
-
-        (actionAttributes as SupabaseAction).filePath = filePath;
+        (actionAttributes as SupabaseAction).operation = operation as 'migration' | 'query';
+        if (operation === 'migration') {
+          const filePath = this.#extractAttribute(actionTag, 'filePath');
+          if (!filePath) throw new Error('Migration requires a filePath');
+          (actionAttributes as SupabaseAction).filePath = filePath;
+        }
+      } else if (actionType === 'file') {
+        const filePath = this.#extractAttribute(actionTag, 'filePath') as string;
+        if (!filePath) logger.debug('File path not specified');
+        (actionAttributes as FileAction).filePath = filePath;
+      } else if (!['shell', 'start'].includes(actionType)) {
+        logger.warn(`Unknown action type '${actionType}'`);
       }
-    } else if (actionType === 'file') {
-      const filePath = this.#extractAttribute(actionTag, 'filePath') as string;
-
-      if (!filePath) {
-        logger.debug('File path not specified');
-      }
-
-      (actionAttributes as FileAction).filePath = filePath;
-    } else if (!['shell', 'start'].includes(actionType)) {
-      logger.warn(`Unknown action type '${actionType}'`);
+    } catch (error) {
+      logger.error('Error parsing action attributes:', { actionTag, error });
+      throw error; // Re-throw to be caught by the caller
     }
 
     return actionAttributes as FileAction | ShellAction;

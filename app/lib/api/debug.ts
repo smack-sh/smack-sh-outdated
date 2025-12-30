@@ -35,9 +35,11 @@ export const getDebugStatus = async (): Promise<DebugStatus> => {
   };
 
   try {
-    // Check memory usage
-    // performance.memory is an experimental API and might not be available in all environments or types.
-    // Using 'as any' to bypass TypeScript's strict type checking for this experimental feature.
+    /*
+     * Check memory usage
+     * performance.memory is an experimental API and might not be available in all environments or types.
+     * Using 'as any' to bypass TypeScript's strict type checking for this experimental feature.
+     */
     if (performance && 'memory' in performance) {
       const memory = (performance as any).memory;
 
@@ -114,8 +116,11 @@ export const acknowledgeError = async (id: string): Promise<void> => {
 
     if (errorLogs) {
       const errors = JSON.parse(errorLogs);
-      // The id format generated in getDebugStatus is 'error-{timestamp}'.
-      // We need to extract the timestamp part from the acknowledged id to compare with stored error objects.
+
+      /*
+       * The id format generated in getDebugStatus is 'error-{timestamp}'.
+       * We need to extract the timestamp part from the acknowledged id to compare with stored error objects.
+       */
       const timestampToMatch = id.startsWith('error-') ? id.substring(6) : id;
       const updatedErrors = errors.filter((error: any) => error.timestamp !== timestampToMatch);
       localStorage.setItem('error_logs', JSON.stringify(updatedErrors));

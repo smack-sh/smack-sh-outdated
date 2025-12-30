@@ -71,7 +71,7 @@ const themes = [
   {
     id: 'github-light',
     name: 'GitHub Light',
-    description: 'GitHub\'s light theme',
+    description: "GitHub's light theme",
     colors: {
       background: '#ffffff',
       surface: '#f6f8fa',
@@ -84,7 +84,7 @@ const themes = [
   {
     id: 'github-dark',
     name: 'GitHub Dark',
-    description: 'GitHub\'s dark theme',
+    description: "GitHub's dark theme",
     colors: {
       background: '#0d1117',
       surface: '#161b22',
@@ -112,16 +112,19 @@ const themes = [
 export function ThemeManager() {
   const currentTheme = useStore(themeStore);
   const [selectedTheme, setSelectedTheme] = useState(currentTheme);
-  const [customColors, setCustomColors] = useState(themes.find(t => t.id === currentTheme)?.colors || themes[0].colors);
+  const [customColors, setCustomColors] = useState(
+    themes.find((t) => t.id === currentTheme)?.colors || themes[0].colors,
+  );
   const [isCustomMode, setIsCustomMode] = useState(false);
 
   useEffect(() => {
     setSelectedTheme(currentTheme);
-    setCustomColors(themes.find(t => t.id === currentTheme)?.colors || themes[0].colors);
+    setCustomColors(themes.find((t) => t.id === currentTheme)?.colors || themes[0].colors);
   }, [currentTheme]);
 
   const applyTheme = (themeId: string) => {
-    const theme = themes.find(t => t.id === themeId);
+    const theme = themes.find((t) => t.id === themeId);
+
     if (theme) {
       themeStore.set(themeId);
       setCustomColors(theme.colors);
@@ -152,9 +155,7 @@ export function ThemeManager() {
       {/* Header */}
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Theme Manager</h2>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Customize your coding environment
-        </p>
+        <p className="mt-2 text-gray-600 dark:text-gray-400">Customize your coding environment</p>
       </div>
 
       {/* Current Theme Preview */}
@@ -200,14 +201,16 @@ export function ThemeManager() {
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{theme.description}</p>
               <div className="grid grid-cols-3 gap-1">
-                {Object.entries(theme.colors).slice(0, 3).map(([key, color]) => (
-                  <div
-                    key={key}
-                    className="h-4 rounded-sm border border-gray-200 dark:border-gray-600"
-                    style={{ backgroundColor: color }}
-                    title={key}
-                  ></div>
-                ))}
+                {Object.entries(theme.colors)
+                  .slice(0, 3)
+                  .map(([key, color]) => (
+                    <div
+                      key={key}
+                      className="h-4 rounded-sm border border-gray-200 dark:border-gray-600"
+                      style={{ backgroundColor: color }}
+                      title={key}
+                    ></div>
+                  ))}
               </div>
             </button>
           ))}
@@ -238,13 +241,13 @@ export function ThemeManager() {
                     <input
                       type="color"
                       value={color}
-                      onChange={(e) => setCustomColors(prev => ({ ...prev, [key]: e.target.value }))}
+                      onChange={(e) => setCustomColors((prev) => ({ ...prev, [key]: e.target.value }))}
                       className="h-10 w-16 rounded border border-gray-300 dark:border-gray-600"
                     />
                     <input
                       type="text"
                       value={color}
-                      onChange={(e) => setCustomColors(prev => ({ ...prev, [key]: e.target.value }))}
+                      onChange={(e) => setCustomColors((prev) => ({ ...prev, [key]: e.target.value }))}
                       className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-accent-500 focus:border-accent-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       placeholder="#000000"
                     />
@@ -278,7 +281,9 @@ export function ThemeManager() {
           <div className="flex items-center justify-between">
             <div>
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Auto-switch theme</label>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Automatically switch between light and dark based on system preference</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Automatically switch between light and dark based on system preference
+              </p>
             </div>
             <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 dark:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2">
               <span className="inline-block h-4 w-4 transform rounded-full bg-white dark:bg-gray-900 transition-transform bg-accent-600 translate-x-6"></span>

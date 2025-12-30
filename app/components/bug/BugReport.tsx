@@ -7,7 +7,6 @@ export function BugReport() {
     message: '',
   });
   const [status, setStatus] = useState<null | 'success' | 'error' | 'loading'>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,67 +21,23 @@ export function BugReport() {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) {
-        // Parse error response
-        let errorMessage = 'Failed to submit bug report';
-        let errorDetails = '';
-
-        try {
-          const errorData = (await response.json()) as Record<string, unknown>;
-          errorMessage = (errorData.message as string) || (errorData.error as string) || errorMessage;
-          errorDetails = (errorData.details as string) || '';
-        } catch {
-          // If JSON parsing fails, try to get text
-          try {
-            const errorText = await response.text();
-            if (errorText) {
-              errorDetails = errorText;
-            }
-          } catch {
-            // Ignore parse errors
-          }
-        }
-
-        // Determine user-friendly error message based on status code
-        const statusCode = response.status;
-        if (statusCode === 400) {
-          errorMessage = 'Invalid form data. Please check your input and try again.';
-        } else if (statusCode === 401 || statusCode === 403) {
-          errorMessage = 'Authentication required. Please sign in and try again.';
-        } else if (statusCode === 429) {
-          errorMessage = 'Too many requests. Please wait a moment and try again.';
-        } else if (statusCode >= 500) {
-          errorMessage = 'Server error. Please try again later or contact support.';
-        } else if (statusCode === 0 || !navigator.onLine) {
-          errorMessage = 'Network error. Please check your internet connection and try again.';
-        }
-
-        throw new Error(`${errorMessage}${errorDetails ? `\n\nDetails: ${errorDetails}` : ''}`);
+      if (response.ok) {
+        setStatus('success');
+        setFormData({ email: '', subject: '', message: '' });
+        setTimeout(() => setStatus(null), 5000);
+      } else {
+        throw new Error('Failed to submit bug report');
       }
-
-      setStatus('success');
-      setFormData({ email: '', subject: '', message: '' });
-      setTimeout(() => setStatus(null), 5000);
     } catch (error) {
       console.error('Error submitting bug report:', error);
-      
-      // Extract user-friendly error message
-      const errorMessage = error instanceof Error 
-        ? error.message 
-        : 'An unexpected error occurred. Please try again later.';
-      
       setStatus('error');
-      setErrorMessage(errorMessage);
-      setTimeout(() => {
-        setStatus(null);
-        setErrorMessage(null);
-      }, 10000);
+      setTimeout(() => setStatus(null), 5000);
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -105,14 +60,7 @@ export function BugReport() {
 
       {status === 'error' && (
         <div className="mb-6 p-4 rounded-lg bg-red-50 text-red-800 dark:bg-red-900/30 dark:text-red-200">
-          <p className="font-medium mb-1">Error submitting bug report</p>
-          <p className="text-sm whitespace-pre-line">{errorMessage || 'An unexpected error occurred. Please try again later.'}</p>
-          <p className="text-xs mt-2 opacity-75">
-            If this persists, please email us directly at{' '}
-            <a href="mailto:support@smack.netlify.app" className="underline hover:no-underline">
-              support@smack.netlify.app
-            </a>
-          </p>
+          Oops! Something went wrong. Please try again later or email us directly at support@smack.netlify.app
         </div>
       )}
 
@@ -168,7 +116,10 @@ export function BugReport() {
         <div className="flex items-center justify-between">
           <div className="text-sm text-gray-500 dark:text-gray-400">
             Need help? Email us at{' '}
-            <a href="mailto:support@smack.netlify.app" className="text-accent-600 hover:text-accent-500 dark:text-accent-400 dark:hover:text-accent-300">
+            <a
+              href="mailto:support@smack.netlify.app"
+              className="text-accent-600 hover:text-accent-500 dark:text-accent-400 dark:hover:text-accent-300"
+            >
               support@smack.netlify.app
             </a>
           </div>

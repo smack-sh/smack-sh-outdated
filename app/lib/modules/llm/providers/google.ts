@@ -4,7 +4,7 @@ import type { IProviderSetting } from '~/types/model';
 import type { LanguageModelV1 } from 'ai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createOpenAI } from '@ai-sdk/openai';
-import { serverManager } from '~/lib/modules/smack/server-manager';
+import { serverManager } from '~/lib/modules/smack/server-manager.server';
 import { requestManager } from '~/lib/modules/smack/request-manager';
 
 export default class GoogleProvider extends BaseProvider {
@@ -71,10 +71,10 @@ export default class GoogleProvider extends BaseProvider {
     // Check Smack-7B server status and add dynamic model info
     try {
       const status = await serverManager.getStatus();
-      
+
       if (status.running) {
         let label = 'Smack-7B';
-        
+
         if (status.healthy && status.modelLoaded) {
           label = 'Smack-7B (Ready)';
         } else if (status.healthy && !status.modelLoaded) {
@@ -82,7 +82,7 @@ export default class GoogleProvider extends BaseProvider {
         } else if (!status.healthy) {
           label = 'Smack-7B (Starting...)';
         }
-        
+
         dynamicModels.push({
           name: 'smack-7b',
           label,
@@ -92,10 +92,10 @@ export default class GoogleProvider extends BaseProvider {
         });
       } else {
         // Server not running, try to start it
-        serverManager.startServer().catch(error => {
+        serverManager.startServer().catch((error) => {
           console.warn('Failed to start Smack-7B server:', error);
         });
-        
+
         dynamicModels.push({
           name: 'smack-7b',
           label: 'Smack-7B (Starting...)',

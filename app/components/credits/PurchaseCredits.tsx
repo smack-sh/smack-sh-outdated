@@ -10,22 +10,22 @@ const creditPackages = [
     name: 'Starter',
     credits: 100,
     price: 9.99,
-    features: ['100 credits', 'Basic support', 'Email assistance']
+    features: ['100 credits', 'Basic support', 'Email assistance'],
   },
   {
     id: 'pro',
     name: 'Pro',
     credits: 500,
     price: 39.99,
-    features: ['500 credits', 'Priority support', 'Email & chat support', 'Faster response times']
+    features: ['500 credits', 'Priority support', 'Email & chat support', 'Faster response times'],
   },
   {
     id: 'enterprise',
     name: 'Enterprise',
     credits: 20000,
     price: 149.99,
-    features: ['2000 credits', '24/7 support', 'Dedicated account manager', 'Custom solutions']
-  }
+    features: ['2000 credits', '24/7 support', 'Dedicated account manager', 'Custom solutions'],
+  },
 ];
 
 export function PurchaseCredits() {
@@ -35,13 +35,14 @@ export function PurchaseCredits() {
   const handlePurchase = async () => {
     try {
       setIsLoading(true);
+
       const response = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          priceId: creditPackages.find(pkg => pkg.id === selectedPackage)?.priceId
+          priceId: creditPackages.find((pkg) => pkg.id === selectedPackage)?.priceId,
         }),
       });
 
@@ -59,9 +60,7 @@ export function PurchaseCredits() {
     <div className="space-y-8">
       <div className="text-center">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Buy Credits</h2>
-        <p className="mt-2 text-gray-600 dark:text-gray-300">
-          Choose a package that fits your needs
-        </p>
+        <p className="mt-2 text-gray-600 dark:text-gray-300">Choose a package that fits your needs</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -89,18 +88,8 @@ export function PurchaseCredits() {
               <ul className="mt-4 space-y-2">
                 {pkg.features.map((feature, i) => (
                   <li key={i} className="flex items-center text-gray-600 dark:text-gray-300">
-                    <svg
-                      className="w-5 h-5 mr-2 text-green-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
+                    <svg className="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     {feature}
                   </li>

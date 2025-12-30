@@ -46,10 +46,7 @@ export default function RBAC() {
       </div>
 
       {isCreateRoleModalOpen && (
-        <CreateRoleModal
-          permissions={permissions}
-          onClose={() => setIsCreateRoleModalOpen(false)}
-        />
+        <CreateRoleModal permissions={permissions} onClose={() => setIsCreateRoleModalOpen(false)} />
       )}
     </div>
   );
@@ -69,10 +66,7 @@ function RolesTab({ roles }: { roles: Role[] }) {
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {roles.map((role) => (
-          <div
-            key={role.id}
-            className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
-          >
+          <div key={role.id} className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="font-medium text-lg">{role.name}</h3>
@@ -88,10 +82,10 @@ function RolesTab({ roles }: { roles: Role[] }) {
                   role.color === 'red'
                     ? 'bg-red-100 text-red-800'
                     : role.color === 'blue'
-                    ? 'bg-blue-100 text-blue-800'
-                    : role.color === 'green'
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-gray-100 text-gray-800'
+                      ? 'bg-blue-100 text-blue-800'
+                      : role.color === 'green'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-gray-100 text-gray-800'
                 }`}
               >
                 {role.id}
@@ -120,9 +114,10 @@ function RolesTab({ roles }: { roles: Role[] }) {
 function PermissionsTab({ permissions }: { permissions: PermissionObject[] }) {
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredPermissions = permissions.filter(permission =>
-    permission.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    permission.description.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredPermissions = permissions.filter(
+    (permission) =>
+      permission.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      permission.description.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -144,12 +139,13 @@ function PermissionsTab({ permissions }: { permissions: PermissionObject[] }) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredPermissions.map((permission) => (
-          <div key={permission.id} className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div
+            key={permission.id}
+            className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+          >
             <h4 className="font-medium text-gray-900 dark:text-white mb-2">{permission.name}</h4>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{permission.description}</p>
-            <code className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono">
-              {permission.id}
-            </code>
+            <code className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono">{permission.id}</code>
           </div>
         ))}
       </div>
@@ -179,15 +175,17 @@ function UsersTab() {
                 <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
               </div>
               <div className="flex items-center gap-3">
-                <span className={`px-2 py-1 text-xs rounded-full ${
-                  user.role === 'admin'
-                    ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                    : user.role === 'developer'
-                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-                    : user.role === 'designer'
-                    ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                    : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
-                }`}>
+                <span
+                  className={`px-2 py-1 text-xs rounded-full ${
+                    user.role === 'admin'
+                      ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                      : user.role === 'developer'
+                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                        : user.role === 'designer'
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                          : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
+                  }`}
+                >
                   {user.role}
                 </span>
                 <button className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600">
@@ -202,7 +200,7 @@ function UsersTab() {
   );
 }
 
-function CreateRoleModal({ permissions, onClose }: { permissions: any[], onClose: () => void }) {
+function CreateRoleModal({ permissions, onClose }: { permissions: any[]; onClose: () => void }) {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -211,17 +209,18 @@ function CreateRoleModal({ permissions, onClose }: { permissions: any[], onClose
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     // TODO: Implement create role API call
     console.log('Creating role:', formData);
     onClose();
   };
 
   const togglePermission = (permissionId: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       selectedPermissions: prev.selectedPermissions.includes(permissionId)
-        ? prev.selectedPermissions.filter(id => id !== permissionId)
-        : [...prev.selectedPermissions, permissionId]
+        ? prev.selectedPermissions.filter((id) => id !== permissionId)
+        : [...prev.selectedPermissions, permissionId],
     }));
   };
 
@@ -231,13 +230,11 @@ function CreateRoleModal({ permissions, onClose }: { permissions: any[], onClose
         <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Create New Role</h3>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Role Name
-            </label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role Name</label>
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-accent-500 focus:border-accent-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               placeholder="e.g., Project Manager"
               required
@@ -245,13 +242,11 @@ function CreateRoleModal({ permissions, onClose }: { permissions: any[], onClose
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Description
-            </label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
             <textarea
               rows={3}
               value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-accent-500 focus:border-accent-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               placeholder="Describe what this role can do..."
               required
@@ -264,7 +259,10 @@ function CreateRoleModal({ permissions, onClose }: { permissions: any[], onClose
             </label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto">
               {permissions.map((permission) => (
-                <label key={permission.id} className="flex items-center p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                <label
+                  key={permission.id}
+                  className="flex items-center p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                >
                   <input
                     type="checkbox"
                     checked={formData.selectedPermissions.includes(permission.id)}

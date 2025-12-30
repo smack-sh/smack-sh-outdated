@@ -3,8 +3,7 @@ import Stripe from 'stripe';
 
 export const action = async ({ request, context }: ActionFunctionArgs) => {
   try {
-    const stripeSecretKey =
-      (context?.cloudflare?.env as any)?.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
+    const stripeSecretKey = (context?.cloudflare?.env as any)?.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
 
     if (!stripeSecretKey) {
       return json({ error: 'STRIPE_SECRET_KEY is not set in environment variables' }, { status: 500 });
@@ -38,7 +37,7 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
     console.error('Stripe checkout error:', error);
     return json(
       { error: error instanceof Error ? error.message : 'Failed to create checkout session' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };

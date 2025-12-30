@@ -16,6 +16,8 @@ import xtermStyles from '@xterm/xterm/css/xterm.css?url';
 
 import 'virtual:uno.css';
 
+import mobileStyles from './styles/mobile.css?url';
+
 export const links: LinksFunction = () => [
   {
     rel: 'icon',
@@ -26,6 +28,7 @@ export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: tailwindReset },
   { rel: 'stylesheet', href: globalStyles },
   { rel: 'stylesheet', href: xtermStyles },
+  { rel: 'stylesheet', href: mobileStyles },
   {
     rel: 'preconnect',
     href: 'https://fonts.googleapis.com',
@@ -110,19 +113,6 @@ export default function App() {
       })
       .catch((error) => {
         logStore.logError('Failed to initialize debug logging', error);
-      });
-
-    // Initialize Electron error handlers (if in Electron environment)
-    import('./utils/electron-error-handler')
-      .then(({ setupRendererErrorHandlers, setupAppReloadListener }) => {
-        setupRendererErrorHandlers();
-        setupAppReloadListener();
-      })
-      .catch((error) => {
-        // Silently fail if not in Electron environment
-        if (process.env.NODE_ENV === 'development') {
-          console.debug('Electron error handlers not available (not in Electron):', error);
-        }
       });
   }, []);
 

@@ -13,7 +13,7 @@ export function FeatureRequest() {
 
     try {
       // TODO: Implement API call to submit feature request
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       setIsSubmitted(true);
       setTitle('');
       setDescription('');
@@ -29,9 +29,7 @@ export function FeatureRequest() {
     return (
       <div className="p-6 bg-green-50 rounded-lg text-center">
         <h3 className="text-lg font-medium text-green-800">Thank you!</h3>
-        <p className="mt-2 text-green-700">
-          Your feature request has been submitted successfully.
-        </p>
+        <p className="mt-2 text-green-700">Your feature request has been submitted successfully.</p>
         <button
           onClick={() => setIsSubmitted(false)}
           className="mt-4 text-sm text-green-600 hover:text-green-700 underline"

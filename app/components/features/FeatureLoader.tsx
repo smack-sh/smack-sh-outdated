@@ -1,5 +1,5 @@
 import { useState, useEffect, Suspense } from 'react';
-import { getFeature } from '~/features/featureRegistry';
+import { getFeatureById } from '~/features/featureRegistry';
 
 interface FeatureLoaderProps {
   featureId: string;
@@ -7,10 +7,10 @@ interface FeatureLoaderProps {
   errorFallback?: (error: Error) => React.ReactNode;
 }
 
-export function FeatureLoader({ 
-  featureId, 
+export function FeatureLoader({
+  featureId,
   fallback = <div>Loading...</div>,
-  errorFallback = (error) => <div>Error loading feature: {error.message}</div>
+  errorFallback = (error) => <div>Error loading feature: {error.message}</div>,
 }: FeatureLoaderProps) {
   const [Component, setComponent] = useState<React.ComponentType | null>(null);
   const [error, setError] = useState<Error | null>(null);
@@ -18,10 +18,12 @@ export function FeatureLoader({
   useEffect(() => {
     const loadFeature = async () => {
       try {
-        const feature = getFeature(featureId);
+        const feature = getFeatureById(featureId);
+
         if (!feature || !feature.component) {
           throw new Error(`Feature ${featureId} not found`);
         }
+
         const { default: Component } = await feature.component();
         setComponent(() => Component);
       } catch (err) {

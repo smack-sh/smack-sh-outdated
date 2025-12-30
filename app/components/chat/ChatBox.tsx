@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ClientOnly } from 'remix-utils/client-only';
 import { classNames } from '~/utils/classNames';
 import { PROVIDER_LIST } from '~/utils/constants';
@@ -19,7 +19,7 @@ import { ColorSchemeDialog } from '~/components/ui/ColorSchemeDialog';
 import type { DesignScheme } from '~/types/design-scheme';
 import type { ElementInfo } from '~/components/workbench/Inspector';
 import { McpTools } from './MCPTools';
-import { DeployButton } from '../deploy/DeployButton';
+import { isMobile } from '~/utils/mobile';
 
 interface ChatBoxProps {
   isModelSettingsCollapsed: boolean;
@@ -65,6 +65,12 @@ interface ChatBoxProps {
 }
 
 export const ChatBox: React.FC<ChatBoxProps> = (props) => {
+  const [isMobileView, setIsMobileView] = useState(false);
+
+  useEffect(() => {
+    setIsMobileView(isMobile());
+  }, []);
+
   return (
     <div
       className={classNames(
@@ -263,8 +269,13 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
           <div className="flex gap-1 items-center">
             <ColorSchemeDialog designScheme={props.designScheme} setDesignScheme={props.setDesignScheme} />
             <McpTools />
-            <IconButton title="Upload file" className="transition-all" onClick={() => props.handleFileUpload()}>
+            <IconButton
+              title="Upload file"
+              className={classNames('transition-all', isMobileView && 'p-2')}
+              onClick={() => props.handleFileUpload()}
+            >
               <div className="i-ph:paperclip text-xl"></div>
+              {isMobileView && <span className="ml-2">Upload</span>}
             </IconButton>
             <IconButton
               title="Enhance prompt"

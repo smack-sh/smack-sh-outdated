@@ -1,7 +1,9 @@
 import { type ActionFunctionArgs, json } from '@remix-run/cloudflare';
 
-// ADMIN ONLY: All deployments use admin API keys
-// Users cannot deploy with their own keys - centralized control
+/*
+ * ADMIN ONLY: All deployments use admin API keys
+ * Users cannot deploy with their own keys - centralized control
+ */
 const ADMIN_NETLIFY_TOKEN = process.env.VITE_NETLIFY_ACCESS_TOKEN;
 import crypto from 'crypto';
 import type { NetlifySiteInfo } from '~/types/netlify';

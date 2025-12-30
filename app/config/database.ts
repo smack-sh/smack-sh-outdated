@@ -28,11 +28,11 @@ export const testConnections = async () => {
     const aiClient = await aiPool.connect();
     console.log('AI Database connected successfully');
     aiClient.release();
-    
+
     const codeClient = await codePool.connect();
     console.log('Code Database connected successfully');
     codeClient.release();
-    
+
     return true;
   } catch (error) {
     console.error('Database connection error:', error);

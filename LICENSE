@@ -1,21 +1,62 @@
-MIT License
+### Custom License for Smack.sh
 
-Copyright (c) 2024 StackBlitz, Inc. and smack.sh contributors
+**Version 1.0**  
+**Effective Date:** December 30, 2025  
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This license is a legal agreement between you ("User") and the authors of Smack.sh ("Authors"). By using, contributing to, or distributing this project, you agree to the terms outlined below.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+---
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+### Permissions
+1. **Learning and Development Purposes**:  
+   - Users are permitted to access, use, and experiment with the codebase for learning, testing, and educational purposes.
+
+2. **Contribution to the Project**:  
+   - Contributions, including bug fixes, enhancements, and new features, are encouraged. By contributing:
+     - You agree all contributions will be merged into this project under this license.
+     - Contributions cannot be withdrawn once accepted into the main repository.
+   - Code authorship will be preserved and attributed under Git history or within the repository.
+
+3. **Testing and Debugging**:  
+   - Users are permitted to test and debug the project under real-world conditions to ensure functionality.
+
+---
+
+### Restrictions
+1. **Prohibited Redistribution of Alternatives**:  
+   - Users are **strictly prohibited** from creating and distributing alternatives, forks, derivatives, or competitors to this project without written authorization from the Authors.  
+   - Alternatives include:
+     - Any software with significantly similar functionality, scope, or intent to Smack.sh.
+     - Any project that uses significant portions of this project's codebase or ideas.
+
+2. **Permission to Create Alternatives**:  
+   - If you wish to create or distribute your alternative or derivative of this project, you **MUST** contact the Authors at **[Mahirusus@gmail.com](mailto:Mahirusus@gmail.com)** to request formal permission.
+   - Unauthorized creation or distribution of alternatives will result in **legal action.**
+
+3. **Copyright and Attribution**:  
+   - Users must retain the copyright notice and acknowledge the Authors when distributing or repurposing parts of this repository under proper permission.
+
+4. **Prohibition of Monetization**:  
+   - The project may not be monetized or used for commercial services without explicit authorization from the Authors.
+
+5. **No Warranty or Liability**:  
+   - This code is provided "as-is." The Authors offer no warranty for the project’s functionality or security under any circumstance.  
+   - The Authors hold no liability for damages caused by use or misuse of the code.
+
+---
+
+### Legal Enforcement
+- Violations of this license will be considered a breach of intellectual property rights. Immediate **legal action** will be pursued in the event of non-compliance.
+- The Authors reserve the right to update this license at any time. If updated, changes to the license will affect all new versions of the repository, but existing users must adhere to the version of the license in place when they first accessed the code.
+
+---
+
+### Contact
+For inquiries, permissions, and contributions, please contact:  
+**Mahirusus@gmail.com**
+
+---
+
+### Summary
+This license is designed to foster collaboration, learning, and development while protecting the Authors’ rights to control competition or unauthorized derivatives. By respecting these terms, you contribute positively to this project and its community.
+

@@ -4,7 +4,10 @@ import { requireAuth } from '~/utils/auth.server';
 
 export const loader: LoaderFunction = async ({ request, context, params }) => {
   // Ensure we have the required context
-  if (!request) throw new Error('Request is required');
+  if (!request) {
+    throw new Error('Request is required');
+  }
+
   const userId = await requireAuth({ request, context: context || {}, params: params || {} });
 
   // Mock data - in real app, fetch from database
@@ -55,7 +58,7 @@ export const loader: LoaderFunction = async ({ request, context, params }) => {
     environments,
     userSegments,
   });
-}
+};
 
 // Export the client component as default
 import FeatureFlagsComponent from './FeatureFlags';

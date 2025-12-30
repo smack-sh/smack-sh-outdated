@@ -402,6 +402,18 @@ function FileContextMenu({
     }
   };
 
+  const handleMove = async () => {
+    const newPath = prompt(`Enter new path for ${fileName}`, fullPath);
+    if (newPath && newPath !== fullPath) {
+      const success = await workbenchStore.renameFile(fullPath, newPath);
+      if (success) {
+        toast.success('Moved successfully');
+      } else {
+        toast.error('Failed to move');
+      }
+    }
+  };
+
   // Handler for locking a file with full lock
   const handleLockFile = () => {
     try {
@@ -518,6 +530,7 @@ function FileContextMenu({
               </ContextMenuItem>
             </ContextMenu.Group>
             <ContextMenu.Group className="p-1">
+              <ContextMenuItem onSelect={handleMove}>Move</ContextMenuItem>
               <ContextMenuItem onSelect={onCopyPath}>Copy path</ContextMenuItem>
               <ContextMenuItem onSelect={onCopyRelativePath}>Copy relative path</ContextMenuItem>
             </ContextMenu.Group>

@@ -1,0 +1,136 @@
+
+> smack@1.0.0 build /Users/ahmadazizi/Desktop/smack.sh
+> remix vite:build
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+[warn] Data fetching is changing to a single fetch in React Router v7
+┃ You can use the `v3_singleFetch` future flag to opt-in early.
+┃ -> https://remix.run/docs/en/2.13.1/start/future-flags#v3_singleFetch
+┗
+Using vars defined in .env.local
+Using vars defined in .env.local
+vite v5.4.21 building for production...
+transforming...
+app/features/auth/RBAC.tsx (1:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+✓ 2510 modules transformed.
+x Build failed in 13.86s
+[vite]: Rollup failed to resolve import "~/smack-os/components/OSPreview" from "/Users/ahmadazizi/Desktop/smack.sh/app/routes/os.tsx".
+This is most likely unintended because it can break your application at runtime.
+If you do want to externalize this module explicitly add it to
+`build.rollupOptions.external`
+    at rollupWarn (file:///Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/vite@5.4.21_@types+node@24.9.2_sass-embedded@1.93.2_sass@1.93.2_terser@5.44.1/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:65855:17)
+    at file:///Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/vite-plugin-node-polyfills@0.22.0_rollup@4.52.5_vite@5.4.21_@types+node@24.9.2_sass-embedded@_vmsdpqohjzxy4inn7vys6xu7iy/node_modules/vite-plugin-node-polyfills/src/index.ts:216:17
+    at handleCircularDependancyWarning (/Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/node-stdlib-browser@1.3.1/node_modules/node-stdlib-browser/helpers/rollup/plugin.js:29:3)
+    at Object.onwarn (file:///Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/vite-plugin-node-polyfills@0.22.0_rollup@4.52.5_vite@5.4.21_@types+node@24.9.2_sass-embedded@_vmsdpqohjzxy4inn7vys6xu7iy/node_modules/vite-plugin-node-polyfills/src/index.ts:211:15)
+    at onwarn (/Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/@remix-run+dev@2.17.1_@remix-run+react@2.17.1_react-dom@18.3.1_react@18.3.1__react@18.3.1_typ_docasfogp4xx56m4324v6ns2ya/node_modules/@remix-run/dev/dist/vite/plugin.js:628:48)
+    at onRollupWarning (file:///Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/vite@5.4.21_@types+node@24.9.2_sass-embedded@1.93.2_sass@1.93.2_terser@5.44.1/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:65885:5)
+    at onwarn (file:///Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/vite@5.4.21_@types+node@24.9.2_sass-embedded@1.93.2_sass@1.93.2_terser@5.44.1/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:65550:7)
+    at file:///Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/rollup@4.52.5/node_modules/rollup/dist/es/shared/node-entry.js:20951:13
+    at Object.logger [as onLog] (file:///Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/rollup@4.52.5/node_modules/rollup/dist/es/shared/node-entry.js:22823:9)
+    at ModuleLoader.handleInvalidResolvedId (file:///Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/rollup@4.52.5/node_modules/rollup/dist/es/shared/node-entry.js:21567:26)
+    at file:///Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/rollup@4.52.5/node_modules/rollup/dist/es/shared/node-entry.js:21525:26 {
+  watchFiles: [
+    '/Users/ahmadazizi/Desktop/smack.sh/app/entry.client.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/root.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/webcontainer.connect.$id.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/webcontainer.preview.$id.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.configure-firebase.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.configured-providers.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.system.diagnostics.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.terminal.sessions.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.supabase.variables.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.models.$provider.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.mcp-update-config.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.system.disk-info.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.gitlab-branches.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.github-branches.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.github-template.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.export-api-keys.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.gitlab-projects.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.stripe-checkout.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.system.git-info.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.supabase-user.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.supabase.query.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.vercel-deploy.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.check-env-key.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.netlify-deploy.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.git-proxy.$.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.github-stats.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.netlify-user.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.mcp-check.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.github-user.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.vercel-user.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.bug-report.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.supabase.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.git-info.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.enhancer.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/admin._index.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.models.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.llmcall.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/unauthorized.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.health.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.chat.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/templates.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/api.update.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/feature-flags.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/formatter.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/snippets.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/terminal.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/billing.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/chat.$id.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/roadmap.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/history.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/sign-in.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/dev-env.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/themes.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/sign-up.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/_index.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/rbac.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/2fa.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/os.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/team.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/routes/git.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/package.json',
+    '/Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/react@18.3.1/node_modules/react/jsx-runtime.js',
+    '/Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/@remix-run+react@2.17.1_react-dom@18.3.1_react@18.3.1__react@18.3.1_typescript@5.9.3/node_modules/@remix-run/react/dist/esm/index.js',
+    '/Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/react@18.3.1/node_modules/react/index.js',
+    '/Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/client.js',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/features/dev-env/LocalDev.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/features/payments/PaymentProcessor.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/lib/stores/logs.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/utils/stripIndent.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/lib/stores/theme.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/utils/debugLogger.ts',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/features/chat/ChatHistory.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/components/chat/BaseChat.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/components/git/GitUrlImport.client.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/components/header/Header.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/components/ui/BackgroundRays/index.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/styles/index.scss',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/components/chat/Chat.client.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/components/roadmap/FeatureRoadmap.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/features/terminal/AITerminal.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/features/auth/RBAC.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/features/team/TeamDashboard.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/components/features/FeatureLoader.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/components/roadmap/FeatureRequest.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/features/auth/TwoFactorAuth.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/index.js',
+    '/Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/react@18.3.1/node_modules/react/cjs/react.development.js',
+    '/Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/react@18.3.1/node_modules/react/cjs/react-jsx-runtime.development.js',
+    '/Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/@remix-run+react@2.17.1_react-dom@18.3.1_react@18.3.1__react@18.3.1_typescript@5.9.3/node_modules/@remix-run/react/dist/esm/browser.js',
+    '/Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/@remix-run+react@2.17.1_react-dom@18.3.1_react@18.3.1__react@18.3.1_typescript@5.9.3/node_modules/@remix-run/react/dist/esm/components.js',
+    '/Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/@remix-run+react@2.17.1_react-dom@18.3.1_react@18.3.1__react@18.3.1_typescript@5.9.3/node_modules/@remix-run/react/dist/esm/server.js',
+    '/Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/@remix-run+react@2.17.1_react-dom@18.3.1_react@18.3.1__react@18.3.1_typescript@5.9.3/node_modules/@remix-run/react/dist/esm/scroll-restoration.js',
+    '/Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/@remix-run+server-runtime@2.17.1_typescript@5.9.3/node_modules/@remix-run/server-runtime/dist/esm/index.js',
+    '/Users/ahmadazizi/Desktop/smack.sh/node_modules/.pnpm/react-router-dom@6.30.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/react-router-dom/dist/index.js',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/features/flags/FeatureFlags.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/features/templates/ProjectTemplates.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/features/themes/ThemeManager.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/features/formatting/CodeFormatter.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/features/snippets/SnippetManager.tsx',
+    '/Users/ahmadazizi/Desktop/smack.sh/app/styles/variables.scss',
+    ... 2427 more items
+  ]
+}
+ ELIFECYCLE  Command failed with exit code 1.

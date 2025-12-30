@@ -7,9 +7,11 @@ export async function request(url: string, init?: CommonRequest) {
     effectiveInit.body = init.body.toString();
 
     const headers = new Headers(init.headers);
+
     if (!headers.has('Content-Type')) {
       headers.set('Content-Type', 'application/x-www-form-urlencoded');
     }
+
     effectiveInit.headers = headers;
   }
 

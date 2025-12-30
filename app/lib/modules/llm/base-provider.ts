@@ -33,12 +33,8 @@ export abstract class BaseProvider implements ProviderInfo {
     }
 
     const baseUrlKey = this.config.baseUrlKey || defaultBaseUrlKey;
-    let baseUrl =
-      settingsBaseUrl ||
-      serverEnv?.[baseUrlKey] ||
-      process?.env?.[baseUrlKey] || "http://localhost:3000"
-      manager.env?.[baseUrlKey] ||
-      this.config.baseUrl;
+    let baseUrl = settingsBaseUrl || serverEnv?.[baseUrlKey] || process?.env?.[baseUrlKey] || 'http://localhost:3000';
+    manager.env?.[baseUrlKey] || this.config.baseUrl;
 
     if (baseUrl && baseUrl.endsWith('/')) {
       baseUrl = baseUrl.slice(0, -1);
