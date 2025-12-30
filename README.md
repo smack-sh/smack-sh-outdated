@@ -1,6 +1,6 @@
-``` 
-⚠️ This platform is in extreme early stage of development so do expect to see a bun of error ⚠️
-```
+`
+⚠️ This platform is in extreme early stage of development so do expect to see a bunch of errors ⚠️
+`
 
 # Smack.sh - AI Agent Platform
 
