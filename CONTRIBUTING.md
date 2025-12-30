@@ -77,4 +77,4 @@ Once you have these tools installed, you can follow these steps to get the proje
 
 ## Code of Conduct
 
-This project and everyone participating in it is governed by the [Smack.sh Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [maintainers@smack.sh](mailto:maintainers@smack.sh).
+This project and everyone participating in it is governed by the [Smack.sh Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [maintainers@smack-sh.duckdns.org](mailto:maintainerst@smack-sh.duckdns.org)
