@@ -1,0 +1,25 @@
+
+> smack@1.0.0 dev /app
+> node pre-start.cjs  && npx remix vite:dev
+
+
+★═══════════════════════════════════════★
+          S M A C K . S H
+        😎 Welcome  to Smack 😎
+★═══════════════════════════════════════★
+
+📍 Current Version Tag: v"1.0.0"
+📍 Current Commit Version: "6c2850b"
+  Please wait until the URL appears here
+★═══════════════════════════════════════★
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+[warn] Data fetching is changing to a single fetch in React Router v7
+┃ You can use the `v3_singleFetch` future flag to opt-in early.
+┃ -> https://remix.run/docs/en/2.13.1/start/future-flags#v3_singleFetch
+┗
+Using vars defined in .env.local
+Using vars defined in .env.local
+Port 5173 is in use, trying another one...
+Port 5174 is in use, trying another one...
+  ➜  Local:   http://localhost:5175/
+  ➜  Network: use --host to expose
