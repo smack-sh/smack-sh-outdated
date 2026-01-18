@@ -1,6 +1,6 @@
 # Smack.sh — The best AI app builder 🚀
 
-> ⚠️ Early-stage: This platform is in active, early development. Expect rough edges and breaking changes — but it’s already powerful and designed for rapid iteration.
+> ⚠️ This platform is no longer maintained because of unstable erors cuasing this platform to be completely unusable we are working on  new project. 
 
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18-brightgreen)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-%5E5.0-blue)](https://www.typescriptlang.org/)
