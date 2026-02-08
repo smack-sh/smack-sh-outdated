@@ -1,5 +1,5 @@
 import { ClientOnly } from 'remix-utils/client-only';
-import { OSPreview } from '@smack-os/components/OSPreview';
+import { OSPreview } from '../../smack-os/components/OSPreview';
 
 /**
  * Smack OS Route
