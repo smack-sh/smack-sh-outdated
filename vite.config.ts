@@ -82,6 +82,8 @@ export default defineConfig(({ mode }) => ({
     alias: {
       'util/types': resolve(__dirname, './emptyUtilTypes.js'),
       path: 'node:path',
+      '~': resolve(__dirname, './app'),
+      '@smack-os': resolve(__dirname, './smack-os'),
     },
   },
 
